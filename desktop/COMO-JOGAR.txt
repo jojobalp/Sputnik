@@ -1,0 +1,29 @@
+SOBREVIVA A NOITE - TESTE PARA WINDOWS 64 BITS
+
+REQUISITOS: Windows 10/11, Intel/AMD 64 bits, teclado e mouse.
+
+PORTATIL .EXE
+Abra Sobreviva-a-Noite-Windows-x64-1.0.0.exe. Pode levar alguns
+segundos para extrair os componentes temporarios e abrir o jogo.
+Nao precisa de Node.js, servidor, preparador ou internet.
+
+VERSAO .ZIP
+Extraia TODO o ZIP. Abra Sobreviva a Noite.exe da pasta extraida.
+Mantenha as pastas e DLLs junto desse executavel.
+
+CONTROLES
+WASD/setas: mover. Mouse: apontar tocha. E: interagir.
+Esc: pausar. F11: tela cheia. Alt+F4: fechar.
+Ative o audio pelo botao de som dentro do jogo.
+
+VERSAO RECUPERADA DO PROTOTIPO
+Esta compilacao corresponde aos arquivos atualmente disponiveis no
+repositorio. Ainda nao inclui a dificuldade progressiva por hora e
+os tres subsolos descritos anteriormente. Nao tem salvamento.
+
+AVISOS
+Contem claroes intensos (fotossensibilidade).
+Executavel de teste sem assinatura digital. O Windows pode informar
+editor desconhecido. Confira a origem; nao desative seu antivirus.
+O empacotamento e a configuracao sao verificados automaticamente.
+A abertura real e uma partida completa ainda precisam de teste manual.

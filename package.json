@@ -1,0 +1,73 @@
+{
+  "name": "sobreviva-a-noite",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "test": "node --test tests/*.test.cjs",
+    "desktop": "npm run build && electron .",
+    "build:windows": "npm run build && electron-builder --win portable zip --x64 --publish never"
+  },
+  "devDependencies": {
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/dm-sans": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "electron": "44.3.0",
+    "electron-builder": "26.15.3",
+    "vite": "^6.1.0"
+  },
+  "description": "Prototipo de terror e sobrevivencia na mansao Blackwood",
+  "author": "Estudio Umbra",
+  "main": "desktop/main.cjs",
+  "build": {
+    "appId": "studio.umbra.sobreviva-a-noite",
+    "productName": "Sobreviva a Noite",
+    "asar": true,
+    "directories": {
+      "output": "out/windows"
+    },
+    "files": [
+      "dist/**/*",
+      "desktop/main.cjs",
+      "package.json"
+    ],
+    "extraFiles": [
+      {
+        "from": "desktop/COMO-JOGAR.txt",
+        "to": "COMO-JOGAR.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/barlow-condensed/LICENSE",
+        "to": "Licencas/barlow-condensed.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/dm-sans/LICENSE",
+        "to": "Licencas/dm-sans.txt"
+      },
+      {
+        "from": "node_modules/@fontsource/ibm-plex-mono/LICENSE",
+        "to": "Licencas/ibm-plex-mono.txt"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": false,
+      "artifactName": "Sobreviva-a-Noite-Windows-x64-${version}.${ext}"
+    },
+    "npmRebuild": false
+  }
+}
