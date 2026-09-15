@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arcana Grove</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game-shell">
+    <canvas id="game" aria-label="Jogo Arcana Grove"></canvas>
+    <section class="hud">
+      <div class="brand"><span class="sigil">✦</span><div><b>ARCANA GROVE</b><small>FLORESTA TÁTICA</small></div></div>
+      <div class="stats"><span>ONDA <strong id="wave">1</strong></span><span>TEMPO <strong id="time">00:00</strong></span><span>ABATES <strong id="kills">0</strong></span></div>
+      <div class="bar-wrap"><label>VIDA</label><div class="bar"><i id="hp"></i></div><span id="hpText">100 / 100</span></div>
+      <div class="bar-wrap mana"><label>XP</label><div class="bar"><i id="xp"></i></div></div>
+    </section>
+    <div id="hint">WASD / SETAS para mover · O cajado ataca sozinho</div>
+    <div id="levelup" class="overlay hidden"><div class="card-panel"><p class="eyebrow">NÍVEL <span id="level">2</span> ALCANÇADO</p><h1>Escolha seu destino</h1><p class="sub">A ação está congelada</p><div id="choices" class="choices"></div></div></div>
+    <div id="gameover" class="overlay hidden"><div class="card-panel"><p class="eyebrow">A floresta venceu</p><h1>Fim da jornada</h1><p id="finalStats"></p><button id="restart">Tentar novamente</button></div></div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
