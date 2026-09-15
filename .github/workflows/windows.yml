@@ -3,6 +3,7 @@ on:
   push:
     branches: [arena/01a0a57b-sputnik]
   workflow_dispatch:
+  pull_request:
 permissions:
   contents: read
 jobs:
