@@ -131,6 +131,32 @@ O que a prancha do personagem principal ensinou (o resultado está em
   pixels em volta do fundo (anti-aliasing);
 * a coluna da direita (`Original S/N/E/W`) é referência: `--colunas 7` a descarta.
 
+## Cena de batalha (sem grade): `extrair_cena.py`
+
+Nem toda referência é atlas. Uma ilustração de cena (terreno + mobs + itens numa
+imagem só) não tem grade nem animação para "retirar frame a frame": o que se
+extrai é cada desenho solto. Para isso existe a ferramenta irmã:
+
+```bash
+python3 tools/extrair_cena.py --entrada cena.png --saida-dir art/cena \
+    --zonas "0:400=itens" --zonas "400:1050=centro" --zonas "1050:=mobs" \
+    --min-area-zona "mobs=420"
+```
+
+* o fundo claro vira transparência (alfa suave na borda) e cada massa vira um PNG
+  com folga, numa pasta por zona;
+* `--abertura` (padrão 1) quebra as pontes finas que grudam um desenho no outro;
+* `--min-area` e `--min-area-zona` descartam poeira e fragmento de membro;
+* massa maior que `--max-area` (padrão 20000 px²) é aglomerado e vai para
+  `grupos/` — mobs desenhados um por cima do outro **não** se separam sozinhos
+  (watermark/watershed por gradiente foi testado e também não resolve: a massa é
+  contínua de verdade);
+* `--separar` divide o aglomerado por marcadores; funciona quando são desenhos
+  distintos que se encostam (o bruxo e o raio dele saem separados), não quando é
+  multidão sobreposta;
+* sai um `mapa-numerado.png` com um retângulo em cada recorte — é a conferência
+  mais rápida que existe para esse tipo de prancha.
+
 ## Próximo passo (depois de extrair)
 
 Os frames saem grandes (≈80x70) e não têm o padrão do resto do projeto (célula

@@ -19,8 +19,12 @@ assets.js                        carrega os sprites do Aseprite (PNG + JSON)
 Sprite/Characters/               o bruxo (protagonista): .aseprite + PNG + JSON
 Sprite/Enemies/                  inimigos: .aseprite de origem + PNG + JSON
 Sprite/Background/Floor.png      piso (desenhado em modo "cover")
-tools/                           limpeza, verificação e testes dos assets
-docs/limpeza/                    relatório da limpeza dos sprites
+art/referencia/                  pranchas de referência que você enviou
+art/bruxo-casting/               animações do bruxo, quadro a quadro (6 direções)
+art/terrenos-mobs-itens/         cena separada em itens, mobs, efeitos e grupos
+tools/                           limpeza, extração, verificação e testes dos assets
+docs/limpeza/                    relatório da limpeza e como as pranchas são extraídas
+docs/cenario/                    pranchas de contato da cena (revisão rápida)
 docs/unity/                      como importar o personagem na Unity
 ```
 
@@ -56,4 +60,26 @@ python3 tools/verificar_aseprite.py --aseprite Sprite/Characters/bruxo.aseprite 
 node tools/smoke_personagem.mjs
 ```
 
-Requer `pillow` (`pip install pillow`) para as ferramentas em Python.
+### Pranchas de referência → arte limpa
+
+As referências que chegam como prancha (com grade, título e rótulos) viram arte
+limpa em `art/` pelas duas ferramentas de extração:
+
+```bash
+# prancha com grade e animação (6 direções x 7 fases do bruxo)
+python3 tools/extrair_spritesheet.py --entrada art/referencia/bruxo-casting.jpg \
+    --grade componentes --colunas-x "18,175,346,520,691,858,1049,1238" \
+    --linhas-y "47,163,273,390,511,635,753" \
+    --saida-dir art/bruxo-casting --mapa tools/mapas/wizard_casting.json --colunas 7 --gif
+
+# ilustração de cena, sem grade (itens, mobs, efeitos)
+python3 tools/extrair_cena.py --entrada art/referencia/terrenos-mobs-itens.png \
+    --saida-dir art/terrenos-mobs-itens --zonas "0:400=itens" \
+    --zonas "400:1050=centro" --zonas "1050:=mobs" --min-area-zona "mobs=420"
+```
+
+Cada pasta extraída tem o seu `LEIA-ME.md`; o método e as armadilhas estão em
+[`docs/limpeza/LIMPEZA-PRANCHAS.md`](docs/limpeza/LIMPEZA-PRANCHAS.md).
+
+Requer `pillow`, `numpy` e `scipy` (`pip install pillow numpy scipy`) para as
+ferramentas em Python.
