@@ -1,9 +1,14 @@
 # Limpeza e correção dos spritesheets
 
-Relatório da limpeza feita em `Sprite/Enemies/*.png` antes de integrar o sprite do
+Relatório da limpeza feita em `Sprite/Enemies/*` antes de integrar o sprite do
 personagem à Unity. Os **JSONs do Aseprite não precisaram mudar** — o layout
 (mesma ordem de frames, mesma célula 32x32, mesmos retângulos) foi preservado, então
 nem `assets.js` nem a Unity precisam de ajuste de importação.
+
+A limpeza foi aplicada **nos dois lugares**: nos PNGs exportados (o que o jogo lê)
+e dentro dos `.aseprite` de origem (o que a Unity importa direto pelo
+[Aseprite Importer](https://docs.unity3d.com/Packages/com.unity.2d.aseprite@latest/manual/index.html)).
+Sem isso, quem importasse a fonte receberia a arte defeituosa de volta.
 
 ## Como rodar
 
@@ -11,11 +16,15 @@ nem `assets.js` nem a Unity precisam de ajuste de importação.
 # diagnóstico (não altera nada)
 python3 tools/limpar_sprites.py --dir Sprite/Enemies --report
 
-# aplica as correções e grava a auditoria
+# aplica as correções nos PNGs e grava a auditoria
 python3 tools/limpar_sprites.py --dir Sprite/Enemies --fix --edits tools/relatorio-limpeza.json
 
-# confere o contrato PNG + JSON que o jogo espera
-node tools/verificar_assets.mjs
+# aplica as mesmas correções dentro do .aseprite de origem
+python3 tools/corrigir_aseprite.py --aseprite "Sprite/Enemies/enemies.aseprite" --antes-dir <pngs antigos>
+
+# conferências
+node tools/verificar_assets.mjs                       # contrato PNG + JSON do jogo
+python3 tools/verificar_aseprite.py --aseprite "Sprite/Enemies/enemies.aseprite"
 ```
 
 Dependência: `pip install pillow`.
@@ -30,6 +39,7 @@ Dependência: `pip install pillow`.
 | skeleton2 | 66 | `attack` cortava em x=31; `death` e `death2` cortavam/encostavam em x=0 | `attack` -1px, `death`/`death2` +1px |
 | vampire | 49 | 9 cores "órfãs" (ruído de anti-alias: `#7f755d`, `#c26a20`, `#f0df54`…) | aproximadas da cor canônica |
 | vampire | 49 | 198 px **invisíveis** mas com cor `#5e4e3a` (halo que vaza ao filtrar em atlas) | zerados para transparente puro |
+| enemies.aseprite | 162 cels | a fonte trazia a tag `skeleton2_movemen` (nome cortado) enquanto o JSON exportado dizia `skeleton2_movement` — na Unity o clipe sairia com o nome errado | renomeada para `skeleton2_movement` |
 
 O `Floor.png` também foi auditado: é RGB puro (sem canal alfa), não é tileável
 (divergência média de ~15 níveis entre bordas opostas) e tem ~111 mil cores com
@@ -66,24 +76,49 @@ Impacto real no sheet: 5,96% dos pixels do skeleton1 e 7,56% do skeleton2
 
 ## Arquivos
 
-* `tools/limpar_sprites.py` — ferramenta de diagnóstico e correção (idempotente:
+* `tools/limpar_sprites.py` — diagnóstico e correção dos PNGs (idempotente:
   rodar de novo não muda mais nada).
+* `tools/corrigir_aseprite.py` — grava nos `.aseprite` os mesmos frames limpos,
+  reescrevendo só os cels (tags, paleta, slices, layer e durações ficam intactos)
+  e consertando nomes de tag truncados. Sempre relê e confere antes de gravar.
+* `tools/verificar_assets.mjs` — valida manifesto, IHDR dos PNGs, retângulos dos
+  frames, tags e cobertura das animações (534 checagens).
+* `tools/verificar_aseprite.py` — parser independente que compara `.aseprite` com
+  os PNG+JSON exportados: estrutura, cels, tags, durações e pixel a pixel
+  (1021 checagens, 162 frames).
 * `tools/relatorio-limpeza.json` — auditoria: cada pixel removido, cada cor
   mapeada e o deslocamento aplicado por animação. Permite reverter ou conferir.
-* `tools/verificar_assets.mjs` — valida manifesto, IHDR dos PNGs, retângulos dos
-  frames, tags e cobertura das animações.
 * `docs/limpeza/antes-depois_*.png` — comparações visuais das animações corrigidas.
 * `docs/limpeza/final_*.png` — contact sheet do resultado final, por animação.
 
-## O que corrigir no Aseprite (arquivo-fonte)
+## Como reverter
 
-O `Sprite/Enemies/enemies.aseprite` (e as duas cópias `enemies - Copia*.aseprite`,
-todas idênticas — MD5 `513eaa05…`) tem o mesmo conteúdo dos sheets. Se quiser que a
-correção valha também para o arquivo-fonte:
+Tudo o que foi alterado está no Git, em um único commit:
 
-1. Apagar os px soltos listados em `tools/relatorio-limpeza.json`
-   (`solto_removido`).
-2. Renomear/limpar a paleta para as cores canônicas (as 9 hex listadas acima).
-3. Mover `skeleton1_attack`/`skeleton1_death` 1px à esquerda e
-   `skeleton2_attack` -1px / `skeleton2_death` / `skeleton2_death2` +1px.
-4. Reexportar PNG+JSON com o **mesmo nome de arquivo e mesma grade de 32x32**.
+```bash
+git revert <commit>            # desfaz tudo
+git checkout <commit>~1 -- Sprite/Enemies/enemies.aseprite   # só a fonte
+```
+
+Os `.aseprite` corrigidos foram validados abrindo e reconstruindo os 162 frames
+por um parser independente; se quiser garantia extra, abra um deles no Aseprite e
+salve — o arquivo é um `.aseprite` comum, com os cels regravados em zlib.
+
+## Arquivos-fonte `.aseprite`
+
+`enemies.aseprite` e as duas cópias `enemies - Copia*.aseprite` são **byte a byte
+idênticas** (MD5 igual) e receberam a mesma correção. Eles já contêm agora os 162
+frames limpos, os mesmos dos PNGs exportados — conferido frame a frame por
+`tools/verificar_aseprite.py`.
+
+Se você reexportar pelo Aseprite, mantenha o **mesmo nome de arquivo e a mesma
+grade de 32x32** para não precisar mexer no `assets.js` nem no projeto Unity.
+Depois de qualquer reexportação, rode as duas conferências acima — elas avisam se a
+fonte voltou a divergir da exportação.
+
+## Sobre a atualização de 1px por animação
+
+`limpar_sprites.py` alinha a animação inteira (nunca um frame sozinho), usando o
+menor deslocamento possível — no máximo 1px aqui. Isso preserva o "pulo" natural do
+personagem e só corrige o que encostava na borda. Se preferir centralizar a arte na
+célula, use `--alinhamento centro`.
