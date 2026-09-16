@@ -1,0 +1,685 @@
+{
+  "skeleton1": {
+    "sheet": "skeleton1",
+    "frames": {
+      "16": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "17": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "18": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "19": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "20": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "21": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "22": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "23": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "24": {
+        "shift": -1,
+        "solto_removido": [
+          [
+            27,
+            13,
+            "#b3b9d1"
+          ],
+          [
+            29,
+            14,
+            "#b3b9d1"
+          ],
+          [
+            31,
+            22,
+            "#b3b9d1"
+          ]
+        ],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "30": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "31": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "32": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "33": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "34": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "35": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "36": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "37": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "38": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "39": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "40": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "41": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "42": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "43": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "44": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "45": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "46": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      }
+    },
+    "tags": {
+      "skeleton1_attack": -1,
+      "skeleton1_movement": 0,
+      "skeleton1_death": -1,
+      "skeleton1_idle": 0,
+      "skeleton1_take_damage": 0
+    },
+    "tags_sem_solucao": []
+  },
+  "skeleton2": {
+    "sheet": "skeleton2",
+    "frames": {
+      "16": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "17": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "18": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "19": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "20": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "21": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "22": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "23": {
+        "shift": -1,
+        "solto_removido": [
+          [
+            27,
+            16,
+            "#dae0ea"
+          ],
+          [
+            28,
+            17,
+            "#dae0ea"
+          ],
+          [
+            25,
+            18,
+            "#dae0ea"
+          ]
+        ],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "24": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "25": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "26": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "27": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "28": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "29": {
+        "shift": -1,
+        "solto_removido": [
+          [
+            24,
+            28,
+            "#dae0ea"
+          ],
+          [
+            23,
+            29,
+            "#dae0ea"
+          ]
+        ],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "30": {
+        "shift": -1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "36": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "37": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "38": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "39": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "40": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "41": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "42": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "43": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "44": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "45": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "46": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "47": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "48": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "49": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "50": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "51": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "52": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "53": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "54": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "55": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "56": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "57": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "58": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "59": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "60": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "61": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "62": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "63": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "64": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      },
+      "65": {
+        "shift": 1,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 0
+      }
+    },
+    "tags": {
+      "skeleton2_movement": 0,
+      "skeleton2_death2": 1,
+      "skeleton2_idle": 0,
+      "skeleton2_attack": -1,
+      "skeleton2_death": 1,
+      "skeleton2_take_damage": 0
+    },
+    "tags_sem_solucao": []
+  },
+  "vampire": {
+    "sheet": "vampire",
+    "frames": {
+      "0": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 12
+      },
+      "1": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 9
+      },
+      "2": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 12
+      },
+      "3": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 12
+      },
+      "4": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 11
+      },
+      "5": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 12
+      },
+      "6": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#332222": 1,
+          "#ce6d1d": 1
+        },
+        "transparentes_zerados": 12
+      },
+      "7": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 13
+      },
+      "8": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#2a181d": 1,
+          "#c26a20": 1,
+          "#f0df54": 1
+        },
+        "transparentes_zerados": 9
+      },
+      "9": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#2a181d": 1,
+          "#2f1e20": 1,
+          "#ce6d1d": 1
+        },
+        "transparentes_zerados": 8
+      },
+      "10": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1
+        },
+        "transparentes_zerados": 11
+      },
+      "11": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1
+        },
+        "transparentes_zerados": 12
+      },
+      "12": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#f0df54": 1,
+          "#c26a20": 1,
+          "#2a181d": 1
+        },
+        "transparentes_zerados": 10
+      },
+      "13": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {},
+        "transparentes_zerados": 7
+      },
+      "14": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 12
+      },
+      "27": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#6c7183": 1
+        },
+        "transparentes_zerados": 0
+      },
+      "28": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#6c7183": 1
+        },
+        "transparentes_zerados": 0
+      },
+      "30": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 12
+      },
+      "34": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 12
+      },
+      "35": {
+        "shift": 0,
+        "solto_removido": [],
+        "cores_mapeadas": {
+          "#7f755d": 1,
+          "#7c7159": 1
+        },
+        "transparentes_zerados": 12
+      }
+    },
+    "tags": {
+      "vampire_idle": 0,
+      "vampire_attack": 0,
+      "vampire_death": 0,
+      "vampire_movement": 0,
+      "vampire_take_damage": 0
+    },
+    "tags_sem_solucao": []
+  }
+}
