@@ -136,6 +136,28 @@ def ler_arquivo(caminho: str):
     return frames, tags, (largura, altura)
 
 
+def ler_camadas(caminho: str) -> List[str]:
+    """Nomes das camadas, na ordem em que o arquivo as declara.
+
+    O índice usado por cada célula (`layer`) aponta para esta lista — é o que
+    permite, por exemplo, exportar o personagem sem a camada de sombra. Os chunks
+    de camada ficam no primeiro quadro.
+    """
+    with open(caminho, 'rb') as fh:
+        d = fh.read()
+    n_chunks = struct.unpack('<I', d[140:144])[0]
+    pos = 128 + 16
+    nomes: List[str] = []
+    for _ in range(n_chunks):
+        csize, ctype = struct.unpack('<IH', d[pos:pos + 6])
+        body = d[pos + 6:pos + csize]
+        if ctype == 0x2004:      # chunk de camada
+            n = struct.unpack('<H', body[16:18])[0]
+            nomes.append(body[18:18 + n].decode('utf-8', 'replace'))
+        pos += csize
+    return nomes
+
+
 def resolver_vinculos(frames: List[dict], largura: int, altura: int) -> None:
     """Traz a arte das células vinculadas para o quadro que só aponta para ela.
 

@@ -67,7 +67,7 @@ addEventListener('keydown', (e) => {
 addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
 
 /* ---------------------------------------------------------------- estado -- */
-let player, enemies, shots, orbs, particles, trees, game, last = 0;
+let player, enemies, shots, arrows, orbs, particles, trees, game, last = 0;
 let playerMoving = false;   // usado para escolher idle/movement do bruxo
 
 const upgrades = [
@@ -81,12 +81,32 @@ const upgrades = [
 /* Cada tipo de inimigo aponta para um sheet exportado do Aseprite. Os raios de
  * colisão (r) são os mesmos do jogo original; scale só afeta o desenho.
  * O bruxo (personagem principal) saiu da lista: agora ele tem sprite próprio em
- * Sprite/Characters/bruxo.png. */
+ * Sprite/Characters/bruxo.png.
+ *
+ * soldier e orc vêm do pack Tiny RPG (veja art/tiny-rpg-pack/LEIA-ME.md): os
+ * arquivos são gerados por tools/importar_pack.py e, por licença, não entram no
+ * repositório. Sem eles o tipo continua aparecendo, desenhado com o círculo de
+ * fallback. A célula desses dois é 64x64 (a arte original é maior que a dos
+ * esqueletos), mas a âncora é a mesma: os pés na base da célula.
+ *
+ *   soldier — atirador: para a `distancia` px do bruxo e solta uma flecha
+ *   orc     — brutamontes: lento, aguenta pancada e bate mais forte
+ */
 const ENEMY_TYPES = {
-  goblin: { sheet: 'skeleton1', r: 11, hp: 1, spd: .7,  scale: 1.6 },
-  runner: { sheet: 'skeleton2', r: 9,  hp: 1, spd: 1.5, scale: 1.3 },
-  elite:  { sheet: 'skeleton2', r: 16, hp: 7, spd: 1.05, scale: 2.4 },
+  goblin:  { sheet: 'skeleton1', r: 11, hp: 1, spd: .7,  scale: 1.6 },
+  runner:  { sheet: 'skeleton2', r: 9,  hp: 1, spd: 1.5, scale: 1.3 },
+  elite:   { sheet: 'skeleton2', r: 16, hp: 7, spd: 1.05, scale: 2.4 },
+  soldier: { sheet: 'soldier',  r: 11, hp: 2, spd: .85, scale: 1.5,
+             atira: true, distancia: 200, recarga: 1.9, dmg: 9 },
+  orc:     { sheet: 'orc',      r: 15, hp: 6, spd: .55, scale: 1.75, dmg: 26 },
 };
+
+/* Dano de contato dos inimigos que não declaram o seu (esqueletos). */
+const ENEMY_DMG = 18;
+
+/* Quanto tempo depois de começar a animação de ataque o soldado solta a flecha:
+ * é o quadro em que ele estica o braço (o golpe vai até ~700 ms dos 900 ms). */
+const ARROW_DELAY = .7;
 
 /* Personagem principal: mesma convenção dos inimigos — célula 32x32, âncora nos
  * pés (o art tem de 15 a 20 px de altura dentro da célula) e espelhamento
@@ -103,7 +123,7 @@ function reset() {
     sheet, anim: sheet && sheet.ok ? new Assets.Animation(sheet, 'idle') : null,
     dying: false, dead: false,
   };
-  enemies = []; shots = []; orbs = []; particles = []; trees = [];
+  enemies = []; shots = []; arrows = []; orbs = []; particles = []; trees = [];
   for (let i = 0; i < 38; i++) {
     let x = Math.random() * W, y = Math.random() * H;
     if (Math.hypot(x - player.x, y - player.y) > 130) trees.push({ x, y, r: 10 + Math.random() * 16, type: Math.random() > .25 ? 'tree' : 'rock' });
@@ -114,9 +134,24 @@ function reset() {
 }
 
 /* --------------------------------------------------------------- combate -- */
-function spawn() {
+/* Quem pode nascer agora. A mistura abre por tempo de partida: primeiro só os
+ * esqueletos, depois entram o soldado (à distância) e o orc (corpo a corpo), e o
+ * elite continua sendo o raro do fim. */
+function sorteiaTipo() {
+  const pool = [['goblin', 1]];
+  if (game.time > 60) pool.push(['soldier', .55]);
+  if (game.time > 120) pool.push(['runner', .7]);
+  if (game.time > 180) pool.push(['orc', .45]);
+  if (game.time > 300) pool.push(['elite', .2]);
+  const total = pool.reduce((s, [, peso]) => s + peso, 0);
+  let r = Math.random() * total;
+  for (const [tipo, peso] of pool) { r -= peso; if (r <= 0) return tipo; }
+  return 'goblin';
+}
+
+function spawn(type) {
   let a = Math.random() * Math.PI * 2, dist = Math.max(W, H) * .65;
-  let type = game.time > 300 ? (Math.random() < .2 ? 'elite' : 'runner') : game.time > 120 ? 'runner' : 'goblin';
+  type = type || sorteiaTipo();
   const cfg = ENEMY_TYPES[type];
   const sheet = Assets.sheet(cfg.sheet);
   enemies.push({
@@ -127,7 +162,40 @@ function spawn() {
     sheet,
     anim: sheet && sheet.ok ? new Assets.Animation(sheet, 'movement') : null,
     face: 1, hitT: 0, dying: false, remove: false,
+    dmg: cfg.dmg || ENEMY_DMG,
+    /* O soldado começa com a recarga desencontrada para a primeira flecha não
+     * sair junto com a de todos os outros. */
+    reload: cfg.atira ? .8 + Math.random() : 0,
+    atk: 0,
   });
+}
+
+/* Tiro do soldado. Sai da altura da mão (o sprite é ancorado nos pés, então o
+ * corpo fica acima do centro de colisão). */
+function flecha(e) {
+  const cfg = ENEMY_TYPES[e.type];
+  const a = Math.atan2(player.y - e.y, player.x - e.x);
+  const ox = e.x + Math.cos(a) * 10, oy = e.y + Math.sin(a) * 10 - e.r * .5;
+  arrows.push({ x: ox, y: oy, vx: Math.cos(a) * 4.6, vy: Math.sin(a) * 4.6,
+                angle: a, life: 150, dmg: cfg.dmg });
+}
+
+/* Dano no bruxo — escudo primeiro, invulnerabilidade e as animações de reação.
+ * Devolve true se o golpe contou (é o que o inimigo corpo a corpo usa para saber
+ * que acertou e pode tocar a animação de ataque). */
+function hitPlayer(dano) {
+  if (player.inv > 0 || player.dying) return false;
+  if (game.shield) { game.shield--; player.inv = 1.2; return true; }
+  game.hp -= dano;
+  player.inv = 1.2;
+  if (game.hp <= 0) {                       // golpe final: morre com animação
+    player.dying = true;
+    if (player.anim) { player.anim.set('death'); player.anim.restart(); }
+  } else if (player.anim) {                 // reação ao levar dano
+    player.anim.set('take_damage');
+    player.anim.restart();
+  }
+  return true;
 }
 
 function shoot() {
@@ -193,31 +261,49 @@ function update(dt) {
       continue;
     }
 
+    const cfg = ENEMY_TYPES[e.type];
     let a = Math.atan2(player.y - e.y, player.x - e.x), slow = 0;
     for (let t of trees) if (Math.hypot(e.x - t.x, e.y - t.y) < t.r + e.r + 5) slow = .4;
-    e.x += Math.cos(a) * e.spd * (1 - slow);
-    e.y += Math.sin(a) * e.spd * (1 - slow);
-    e.face = player.x >= e.x ? 1 : -1;   // sprites olham p/ direita por padrão
-
     const dist = Math.hypot(e.x - player.x, e.y - player.y);
-    const contact = dist < e.r + player.r + 4;
-    if (e.anim) {
-      e.anim.set(e.hitT > 0 ? 'take_damage' : (contact ? 'attack' : 'movement'));
-      e.anim.advance(dt * 1000);
-    }
+    const passo = e.spd * (1 - slow);
 
-    if (dist < e.r + player.r && player.inv <= 0) {
-      if (game.shield) { game.shield--; player.inv = 1.2; } else game.hp -= 18;
-      player.inv = 1.2;
-      if (game.hp <= 0) {                       // golpe final: morre com animação
-        player.dying = true;
-        if (player.anim) { player.anim.set('death'); player.anim.restart(); }
-      } else if (player.anim) {                 // reação ao levar dano
-        player.anim.set('take_damage');
-        player.anim.restart();
+    if (cfg.atira) {
+      /* Atirador: anda só até a distância de tiro e espera ali, atirando. Só se
+       * aproxima de novo se o bruxo se afastar. */
+      if (dist > cfg.distancia) { e.x += Math.cos(a) * passo; e.y += Math.sin(a) * passo; }
+      e.reload -= dt;
+      if (e.atk > 0) {                       // solta a flecha no meio da animação
+        e.atk -= dt;
+        if (e.atk <= 0) flecha(e);
       }
+      if (e.reload <= 0 && !player.dying && dist < cfg.distancia + 140) {
+        e.reload = cfg.recarga * (.85 + Math.random() * .3);
+        if (e.anim) { e.anim.set('attack'); e.anim.restart(); }
+        e.atk = ARROW_DELAY;
+      }
+      if (e.anim) e.anim.set(e.hitT > 0 ? 'take_damage' : (e.atk > 0 ? 'attack' : 'movement'));
+    } else {
+      e.x += Math.cos(a) * passo;
+      e.y += Math.sin(a) * passo;
+      if (e.anim) e.anim.set(e.hitT > 0 ? 'take_damage'
+        : (dist < e.r + player.r + 4 ? 'attack' : 'movement'));
+    }
+    e.face = player.x >= e.x ? 1 : -1;   // sprites olham p/ direita por padrão
+    if (e.anim) e.anim.advance(dt * 1000);
+
+    // encostou no bruxo: corpo a corpo (o atirador não chega perto, só atira)
+    if (dist < e.r + player.r && !cfg.atira) hitPlayer(e.dmg);
+  }
+
+  /* flechas do soldado: andam em linha reta e somem ao acertar ou expirar */
+  for (let f of arrows) { f.x += f.vx; f.y += f.vy; f.life -= dt * 60; }
+  for (let f of arrows) {
+    if (f.life > 0 && Math.hypot(f.x - player.x, f.y - player.y) < player.r + 4) {
+      f.life = 0;
+      hitPlayer(f.dmg);
     }
   }
+  arrows = arrows.filter((f) => f.life > 0);
 
   for (let s of shots) {
     for (let e of enemies) {
@@ -326,6 +412,36 @@ function drawSheet(sheet, anim, x, feetY, scale, face) {
   ctx.restore();
 }
 
+/* Cor de cada tipo no desenho de fallback (quando o sheet não carregou). */
+const FALLBACK_COR = {
+  goblin: '#a7c85e', runner: '#ddad54', elite: '#db725d',
+  soldier: '#9db6c9', orc: '#8d9b4f',
+};
+
+/* Flechas do soldado: o desenho aponta para a direita, então basta girar pelo
+ * ângulo do voo. Sem o sheet, um traço claro no lugar. */
+function drawArrows() {
+  const sheet = Assets.sheet('flecha');
+  const temSprite = sheet && sheet.ok && sheet.frames.length;
+  const rct = temSprite ? sheet.frames[0] : null;
+  const escala = 1.7;
+
+  for (let f of arrows) {
+    if (!temSprite) {
+      ctx.fillStyle = '#efe6d2';
+      ctx.beginPath(); ctx.arc(f.x, f.y, 3, 0, 7); ctx.fill();
+      continue;
+    }
+    ctx.save();
+    ctx.translate(f.x, f.y);
+    ctx.rotate(f.angle);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(sheet.image, rct.x, rct.y, rct.w, rct.h,
+      -rct.w * escala / 2, -rct.h * escala / 2, rct.w * escala, rct.h * escala);
+    ctx.restore();
+  }
+}
+
 function drawEnemy(e) {
   const feetY = e.y + e.r;
   // sombra de contato com o chão
@@ -337,8 +453,8 @@ function drawEnemy(e) {
   if (e.anim && e.sheet && e.sheet.ok) {
     drawSheet(e.sheet, e.anim, e.x, feetY, e.scale, e.face);
   } else {
-    // fallback: o desenho vetorial original
-    ctx.fillStyle = e.type === 'elite' ? '#db725d' : e.type === 'runner' ? '#ddad54' : '#a7c85e';
+    // fallback: o desenho vetorial original (um por tipo, para dar p/ distinguir)
+    ctx.fillStyle = FALLBACK_COR[e.type] || FALLBACK_COR.goblin;
     ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, 7); ctx.fill();
     ctx.fillStyle = '#14251b';
     ctx.fillRect(e.x - 5, e.y - 2, 3, 3); ctx.fillRect(e.x + 3, e.y - 2, 3, 3);
@@ -386,6 +502,8 @@ function draw() {
     ctx.beginPath(); ctx.arc(s.x, s.y, 5, 0, 7); ctx.fill();
     ctx.shadowBlur = 0;
   }
+
+  drawArrows();
 
   for (let e of enemies) drawEnemy(e);
 

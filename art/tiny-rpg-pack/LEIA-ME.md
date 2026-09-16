@@ -48,6 +48,7 @@ art/tiny-rpg-pack/
 ├── orc/                 Orc.png (grade 8×6) + 6 tiras — versão SEM sombra
 ├── orc-com-sombra/      Orc.png + 6 tiras — versão COM sombra
 ├── flecha/              Arrow01(32x32).png, Arrow01(100x100).png
+├── jogo/                sheets convertidos p/ o jogo (gerados; fora do Git)
 ├── manifest.json        inventário (versionado no Git)
 └── previa-*.png         pranchas de conferência (fora do Git, como a arte)
 ```
@@ -130,13 +131,80 @@ Ou seja: o pack está na **mesma escala do jogo** (um pouco maior — o soldado 
 ~30% mais altura que o esqueleto). Dá para usar sem reescalar, ou reduzir ~25%
 para casar exatamente com os inimigos atuais.
 
-## Próximos passos possíveis (nada feito ainda)
+## Convertido para o jogo
 
-1. **Preparar no formato do jogo**: recortar cada quadro para a célula do projeto
-   (32×32 ou 48×48), com âncora nos pés e as tags `idle`/`movement`/`attack`/
-   `take_damage`/`death` — o mesmo PNG+JSON que `Sprite/Enemies/` usa hoje.
-2. **Entrar no jogo como inimigos**: soldado como inimigo à distância (flecha) e
-   orc como brutamontes corpo a corpo.
-3. **Pack completo** ($2.50, 22 personagens): traz esqueletos, necromante e mago
+O pack foi recortado para o formato que o jogo usa (`Sprite/Enemies/*.png` +
+`.json`, uma tira de uma linha por animação, âncora nos pés). Quem faz isso é
+`tools/importar_pack.py`, que lê os `.aseprite` de origem — não as tiras — para
+poder **tirar a camada de sombra** (o jogo desenha a sombra de contato dele) e
+usar a duração real de cada quadro:
+
+```bash
+python3 tools/importar_pack.py --mapa tools/mapas/pack_tiny.json \
+    --saida-dir art/tiny-rpg-pack/jogo
+cp art/tiny-rpg-pack/jogo/{soldier,orc,flecha}.{png,json} Sprite/Enemies/
+```
+
+O que o de/para (`tools/mapas/pack_tiny.json`) diz:
+
+| no jogo        | Soldier        | Orc            |
+| -------------- | -------------- | -------------- |
+| `idle`         | Idle (6)       | Idle (6)       |
+| `movement`     | Walk (8)       | Walk (8)       |
+| `attack`       | **Attack03** (9) | **Attack01** (6) |
+| `take_damage`  | Hurt (4)       | Hurt (4)       |
+| `death`        | Death (4)      | Death (4)      |
+
+| outros números | Soldier | Orc |
+| -------------- | ------- | --- |
+| célula         | 64×64   | 64×64 |
+| quadros na tira | 31     | 28  |
+| pé na célula   | linha 58 | linha 58 |
+| pés por linha  | 5 px de margem até a base | idem |
+
+Por que não 32×32 como os esqueletos: o golpe do soldado chega a ocupar 45 px de
+largura (quadro 8 do Attack03) e o do orc, 37–38 px. Em 32×32 sobraria cortar ou
+reduzir ~0,84×, e o pixel art perderia a grade. A célula 64×64 mantém a arte em
+1:1; o `scale` do jogo cuida do tamanho na tela.
+
+O importador confere o próprio recorte: **100% da tinta preservada** nos dois
+(soma do canal alfa antes/depois). Duas observações que ele reporta:
+
+- nos 3 últimos quadros do golpe do orc o tacape **chega à última linha** da
+  célula (folga zero, nada cortado) — é o pack desenhando abaixo da linha dos pés;
+- a sombra do pack fica de fora de propósito (o jogo já desenha a elipse de
+  contato, na mesma âncora).
+
+### Onde os arquivos ficam
+
+Os sheets convertidos **não entram no Git** (mesma licença da arte de origem):
+`art/tiny-rpg-pack/jogo/` fica ignorado inteiro e, dentro de `Sprite/Enemies/`,
+só `soldier.*`, `orc.*`, `flecha.*` (e o `gerado.json` do importador) estão no
+`.gitignore`. Num clone novo, o jogo roda sem eles — os dois tipos aparecem
+desenhados com o círculo de fallback — e `node tools/verificar_assets.mjs` avisa
+que faltam (não é erro).
+
+A prancha `previa-no-jogo.png` (bruxo + soldado + orc na escala e na âncora do
+jogo, sobre o piso do projeto) também é gerada e ignorada:
+
+```bash
+python3 tools/prancha_inimigos.py --saida art/tiny-rpg-pack/previa-no-jogo.png
+```
+
+## O que já entrou no jogo
+
+- **Soldado** — atirador: para a 200 px do bruxo, toca `attack` e solta a flecha
+  0,7 s depois (o quadro em que ele estica o braço), a cada ~1,9 s. Flecha: sprite
+  do pack (célula 32×32) girando pelo ângulo do voo, 9 de dano. Nunca dá dano de
+  contato.
+- **Orc** — brutamontes: lento (0,55), 6 de vida e 26 de dano por pancada.
+
+Números e comportamento: [`docs/inimigos/LEIA-ME.md`](../../docs/inimigos/LEIA-ME.md).
+
+## Próximos passos possíveis
+
+1. **Attack02 do soldado** (o golpe de lâmina branca) está sem uso — pode virar
+   uma segunda variante de ataque à distância ou um golpe corpo a corpo curto.
+2. **Pack completo** ($2.50, 22 personagens): traz esqueletos, necromante e mago
    que combinam com o tema do jogo — mas aí a licença continua valendo, então a
    arte segue fora do Git.

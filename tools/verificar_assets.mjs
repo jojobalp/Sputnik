@@ -8,8 +8,8 @@
  *   - se todo retângulo de frame do JSON cabe dentro do PNG;
  *   - se a soma das larguras dos frames bate com a largura do sheet (layout de tira);
  *   - se as tags de animação existem (idle/movement/attack/take_damage/death);
- *   - se os PNGs não têm pixels encostando na borda da célula (margem p/ atlas);
- *   - se nenhum frame tem conteúdo encostando na borda da célula (margem p/ atlas).
+ *   - a célula de cada sheet (32x32 nos originais, 64x64 nos do pack Tiny RPG);
+ *   - os sheets do pack são opcionais: sem eles, avisa em vez de falhar.
  *
  * Uso: node tools/verificar_assets.mjs
  */
@@ -49,25 +49,44 @@ function lerIHDR(caminho) {
 
 /* --------------------------------------------------- manifesto do jogo -- */
 const assetsJs = readFileSync(join(raiz, 'assets.js'), 'utf8');
-const caminhos = [...assetsJs.matchAll(/BASE \+ '([^']+)'/g)].map((m) => join(raiz, 'Sprite', m[1]));
+const caminhos = [...assetsJs.matchAll(/BASE \+ '([^']+)'/g)].map((m) => {
+  const linha = assetsJs.slice(assetsJs.lastIndexOf('\n', m.index) + 1,
+                                assetsJs.indexOf('\n', m.index));
+  return { caminho: join(raiz, 'Sprite', m[1]), opcional: /\/\/\s*opcional/.test(linha) };
+});
 ok(caminhos.length >= 4, 'assets.js: manifesto não encontrou os caminhos esperados');
-for (const caminho of caminhos) {
+for (const { caminho, opcional } of caminhos) {
+  /* O que vem de pack de terceiros é opcional: o repositório não guarda a arte",
+     então o arquivo só existe depois de rodar tools/importar_pack.py. */
+  if (opcional && !existsSync(caminho)) {
+    aviso(false, `falta ${caminho.replace(raiz + '/', '')} (opcional) — gere com tools/importar_pack.py`);
+    continue;
+  }
   ok(existsSync(caminho), `assets.js aponta para arquivo inexistente: ${caminho}`);
 }
 
 /* ------------------------------------------------------------- sheets -- */
 // o protagonista fica em Sprite/Characters, os inimigos em Sprite/Enemies
+const TAGS_INIMIGO = ['idle', 'movement', 'attack', 'take_damage', 'death'];
 const sheets = [
-  { nome: 'bruxo', pasta: 'Characters' },
-  { nome: 'skeleton1', pasta: 'Enemies' },
-  { nome: 'skeleton2', pasta: 'Enemies' },
+  { nome: 'bruxo',     pasta: 'Characters', celula: 32, esperados: TAGS_INIMIGO },
+  { nome: 'skeleton1', pasta: 'Enemies',    celula: 32, esperados: TAGS_INIMIGO },
+  { nome: 'skeleton2', pasta: 'Enemies',    celula: 32, esperados: [...TAGS_INIMIGO, 'death2'] },
+  /* Pack Tiny RPG: célula maior (a arte original é 100x100) e sem a sombra do
+   * pack, que o jogo desenha por conta própria. Arquivos opcionais. */
+  { nome: 'soldier', pasta: 'Enemies', celula: 64, esperados: TAGS_INIMIGO, opcional: true },
+  { nome: 'orc',     pasta: 'Enemies', celula: 64, esperados: TAGS_INIMIGO, opcional: true },
+  { nome: 'flecha',  pasta: 'Enemies', celula: 32, esperados: ['idle'], opcional: true },
 ];
 const resumo = [];
 
-for (const { nome, pasta } of sheets) {
+for (const { nome, pasta, celula, esperados, opcional } of sheets) {
   const png = join(raiz, 'Sprite', pasta, `${nome}.png`);
   const js = join(raiz, 'Sprite', pasta, `${nome}.json`);
-  if (!existsSync(png) || !existsSync(js)) continue;
+  if (!existsSync(png) || !existsSync(js)) {
+    if (!opcional) ok(false, `${nome}: faltam ${nome}.png/.json em Sprite/${pasta}/`);
+    continue;
+  }
 
   const ihdr = lerIHDR(png);
   const dados = JSON.parse(readFileSync(js, 'utf8'));
@@ -86,7 +105,8 @@ for (const { nome, pasta } of sheets) {
     const r = frames[i].frame;
     ok(r.x >= 0 && r.y >= 0 && r.x + r.w <= ihdr.largura && r.y + r.h <= ihdr.altura,
       `${nome}.json: frame ${i} (${r.x},${r.y},${r.w},${r.h}) cai fora do PNG ${ihdr.largura}x${ihdr.altura}`);
-    ok(r.w === 32 && r.h === 32, `${nome}.json: frame ${i} não é 32x32 (${r.w}x${r.h})`);
+    ok(r.w === celula && r.h === celula,
+      `${nome}.json: frame ${i} não é ${celula}x${celula} (${r.w}x${r.h})`);
   }
 
   const soma = frames.reduce((s, f) => s + f.frame.w, 0);
@@ -105,16 +125,13 @@ for (const { nome, pasta } of sheets) {
     aviso(false, `${nome}: ${frames.length - cobertos.size} frame(s) sem tag de animação`);
   }
 
-  const esperados = { bruxo: ['idle', 'movement', 'attack', 'take_damage', 'death'],
-                      skeleton1: ['idle', 'movement', 'attack', 'take_damage', 'death'],
-                      skeleton2: ['idle', 'movement', 'attack', 'take_damage', 'death', 'death2'] }[nome];
   for (const curto of esperados) {
     ok(tags.some((t) => t.name === `${nome}_${curto}` || t.name.endsWith('_' + curto)),
       `${nome}.json: falta a tag de ${curto}`);
   }
 
   resumo.push({
-    nome,
+    nome: opcional ? `${nome} (pack)` : nome,
     sheet: `${ihdr.largura}x${ihdr.altura}`,
     frames: frames.length,
     tags: tags.length,

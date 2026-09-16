@@ -35,6 +35,7 @@ art/terrenos-mobs-itens/         cena separada em itens, mobs, efeitos e grupos
 tools/                           limpeza, extração, verificação e testes dos assets
 docs/limpeza/                    relatório da limpeza e como as pranchas são extraídas
 docs/cenario/                    pranchas de contato da cena (revisão rápida)
+docs/inimigos/                   soldado e orc: de onde vêm e como agem no jogo
 docs/unity/                      como importar o personagem na Unity
 ```
 
@@ -68,6 +69,9 @@ python3 tools/verificar_aseprite.py --aseprite Sprite/Characters/bruxo.aseprite 
 
 # o bruxo carrega, anima, ataca, reage ao dano e morre (sem navegador)
 node tools/smoke_personagem.mjs
+
+# soldado e orc nascem, atiram, batem, morrem e caem no fallback sem os sheets
+node tools/smoke_inimigos.mjs
 
 # a página de prévia monta os cartões, roda os quadros e responde aos controles
 node tools/smoke_previa.mjs
@@ -112,8 +116,25 @@ python3 tools/inventariar_pack.py \
     --saida art/tiny-rpg-pack/manifest.json
 ```
 
+**Convertidos para o jogo** (soldado atirador e orc brutamontes) por
+`tools/importar_pack.py`, que lê os `.aseprite` originais, tira a camada de
+sombra (o jogo desenha a dele) e corta tudo em células de 64×64 com a âncora nos
+pés:
+
+```bash
+python3 tools/importar_pack.py --mapa tools/mapas/pack_tiny.json \
+    --saida-dir art/tiny-rpg-pack/jogo
+cp art/tiny-rpg-pack/jogo/{soldier,orc,flecha}.{png,json} Sprite/Enemies/
+```
+
+Os sheets convertidos também ficam fora do Git (`art/tiny-rpg-pack/jogo/` inteiro
+e `Sprite/Enemies/{soldier,orc,flecha}.*`): quem clona roda o comando acima — e,
+sem eles, o jogo continua rodando com o desenho de fallback.
+
 Detalhes, licença e escala comparada com os sprites do jogo:
-[`art/tiny-rpg-pack/LEIA-ME.md`](art/tiny-rpg-pack/LEIA-ME.md).
+[`art/tiny-rpg-pack/LEIA-ME.md`](art/tiny-rpg-pack/LEIA-ME.md). Os dois inimigos,
+os números e o que os testes cobrem:
+[`docs/inimigos/LEIA-ME.md`](docs/inimigos/LEIA-ME.md).
 
 Requer `pillow`, `numpy` e `scipy` (`pip install pillow numpy scipy`) para as
 ferramentas em Python.

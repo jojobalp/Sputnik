@@ -15,10 +15,9 @@
  * Uso: node tools/smoke_personagem.mjs
  */
 
-import { readFileSync, existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import vm from 'node:vm';
+import { criarAmbiente, rodarJogo } from './apoio/falso_navegador.mjs';
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -32,114 +31,11 @@ function checar(cond, msg) {
 function titulo(t) { console.log(`\n${t}`); }
 
 /* ------------------------------------------------ stubs de DOM e canvas -- */
-const desenhos = [];          // cada drawImage registrado
-const elementos = new Map();
+/* O ambiente falso (DOM, canvas, Image, fetch) e o carregamento do jogo moram
+ * em tools/apoio/falso_navegador.mjs, compartilhados com o teste dos inimigos. */
+const { sandbox, desenhos } = criarAmbiente(raiz);
 
-function classListFalsa(inicial = []) {
-  const set = new Set(inicial);
-  return {
-    add: (...c) => c.forEach((x) => set.add(x)),
-    remove: (...c) => c.forEach((x) => set.delete(x)),
-    contains: (c) => set.has(c),
-    toggle: (c) => (set.has(c) ? set.delete(c) : set.add(c)),
-    _set: set,
-  };
-}
-
-function ctxFalso() {
-  const alvo = {
-    drawImage(...args) { desenhos.push(args); },
-    canvas: null,
-  };
-  return new Proxy(alvo, {
-    get(t, k) {
-      if (k in t) return t[k];
-      if (k === 'then') return undefined;
-      return () => {};
-    },
-    set(t, k, v) { t[k] = v; return true; },
-  });
-}
-
-function canvasFalso() {
-  const c = {
-    width: 0, height: 0, style: {},
-    classList: classListFalsa(),
-    getContext: () => { const x = ctxFalso(); x.canvas = c; return x; },
-    addEventListener() {}, removeEventListener() {},
-  };
-  return c;
-}
-
-function elementoFalso(id) {
-  const e = {
-    id, textContent: '', innerHTML: '', style: {}, onclick: null,
-    classList: classListFalsa(['overlay', 'hidden'].includes(id) ? ['hidden'] : []),
-    addEventListener() {}, removeEventListener() {},
-  };
-  return e;
-}
-
-function elemento(sel) {
-  if (!elementos.has(sel)) {
-    elementos.set(sel, sel === '#game' ? canvasFalso() : elementoFalso(sel));
-  }
-  return elementos.get(sel);
-}
-
-const ouvintes = {};
-const sandbox = {
-  console,
-  setTimeout, clearTimeout, setInterval, clearInterval,
-  Promise, Math, Date, JSON, Object, Array, String, Number, Boolean, Error,
-  devicePixelRatio: 1,
-  innerWidth: 1280,
-  innerHeight: 720,
-  addEventListener: (tipo, fn) => { (ouvintes[tipo] ||= []).push(fn); },
-  removeEventListener: () => {},
-  document: {
-    querySelector: (sel) => elemento(sel),
-    querySelectorAll: () => [],
-    createElement: (tag) => (tag === 'canvas' ? canvasFalso() : elementoFalso(tag)),
-    addEventListener() {},
-  },
-};
-
-// requestAnimationFrame controlado pelo teste: guarda o callback do próximo quadro.
-// (o sandbox é o próprio global do contexto do VM, então sandbox.__raf === globalThis.__raf lá dentro)
-sandbox.__raf = null;
-sandbox.requestAnimationFrame = (cb) => { sandbox.__raf = cb; return 1; };
-
-/* Image e fetch lendo os arquivos do repositório */
-class ImagemFalsa {
-  constructor() { this.onload = null; this.onerror = null; this._src = ''; }
-  set src(v) {
-    this._src = v;
-    const caminho = join(raiz, v);
-    if (existsSync(caminho)) {
-      const buf = readFileSync(caminho);
-      this.width = buf.readUInt32BE(16);
-      this.height = buf.readUInt32BE(20);
-      queueMicrotask(() => this.onload && this.onload());
-    } else {
-      queueMicrotask(() => this.onerror && this.onerror());
-    }
-  }
-  get src() { return this._src; }
-}
-sandbox.Image = ImagemFalsa;
-sandbox.fetch = async (url) => {
-  const caminho = join(raiz, url);
-  if (!existsSync(caminho)) return { ok: false, json: async () => { throw new Error('404'); } };
-  return { ok: true, json: async () => JSON.parse(readFileSync(caminho, 'utf8')) };
-};
-
-/* --------------------------------------- carrega o jogo de verdade no VM -- */
-const codigo = [
-  readFileSync(join(raiz, 'assets.js'), 'utf8'),
-  readFileSync(join(raiz, 'game.js'), 'utf8'),
-].join('\n;\n');
-
+/* ----------------------------------------------------- testes dentro do jogo -- */
 const testes = `
 (async () => {
   const esperar = () => new Promise((r) => setTimeout(r, 0));
@@ -159,8 +55,7 @@ const testes = `
 })();
 `;
 
-const ctx = vm.createContext(sandbox);
-vm.runInContext(codigo + '\n' + testes, ctx, { filename: 'jogo.js' });
+rodarJogo(sandbox, raiz, testes);
 
 /* --------------------------------------------------------------- testes -- */
 await new Promise((r) => setTimeout(r, 60));   // espera o boot

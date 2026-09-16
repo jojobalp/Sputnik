@@ -18,3 +18,12 @@ art/tiny-rpg-pack/*
 !art/tiny-rpg-pack/LEIA-ME.md
 !art/tiny-rpg-pack/manifest.json
 art/referencia/tiny-rpg-pack-*.zip
+
+# Sprites derivados do pack (gerados por tools/importar_pack.py em
+# Sprite/Enemies/): valem as mesmas restrições de licença da arte de origem, e
+# cada um recria os seus com o comando documentado em
+# art/tiny-rpg-pack/LEIA-ME.md.
+Sprite/Enemies/soldier.*
+Sprite/Enemies/orc.*
+Sprite/Enemies/flecha.*
+Sprite/Enemies/gerado.json
