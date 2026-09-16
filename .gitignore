@@ -1,2 +1,20 @@
 __pycache__/
 *.pyc
+
+# ---------------------------------------------------------------------------
+# Pack de terceiros (Tiny RPG Character Asset Pack 01 V2.0, de Zerie)
+#
+# A licença do pack permite usar e modificar os assets em projetos pessoais e
+# comerciais, mas NÃO permite redistribuir, revender ou reenviar os arquivos —
+# nem modificados. Este repositório é público, então a arte do pack fica fora
+# do Git: ela continua na pasta de trabalho (para o jogo usar aqui) e cada um
+# baixa o pack da origem:
+#     https://zerie.itch.io/tiny-rpg-character-asset-pack
+#
+# O que É versionado nessa pasta: o inventário (manifest.json, gerado por
+# tools/inventariar_pack.py) e o LEIA-ME — dados e documentação, não a arte.
+# ---------------------------------------------------------------------------
+art/tiny-rpg-pack/*
+!art/tiny-rpg-pack/LEIA-ME.md
+!art/tiny-rpg-pack/manifest.json
+art/referencia/tiny-rpg-pack-*.zip

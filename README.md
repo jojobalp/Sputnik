@@ -29,6 +29,7 @@ Sprite/Characters/               o bruxo (protagonista): .aseprite + PNG + JSON
 Sprite/Enemies/                  inimigos: .aseprite de origem + PNG + JSON
 Sprite/Background/Floor.png      piso (desenhado em modo "cover")
 art/referencia/                  pranchas de referência que você enviou
+art/tiny-rpg-pack/               pack de terceiros (Soldier & Orc) — arte fora do Git, ver licença
 art/bruxo-casting/               animações do bruxo, quadro a quadro (6 direções)
 art/terrenos-mobs-itens/         cena separada em itens, mobs, efeitos e grupos
 tools/                           limpeza, extração, verificação e testes dos assets
@@ -92,6 +93,27 @@ python3 tools/extrair_cena.py --entrada art/referencia/terrenos-mobs-itens.png \
 
 Cada pasta extraída tem o seu `LEIA-ME.md`; o método e as armadilhas estão em
 [`docs/limpeza/LIMPEZA-PRANCHAS.md`](docs/limpeza/LIMPEZA-PRANCHAS.md).
+
+### Pack de terceiros (Tiny RPG Character Asset Pack 01 V2.0)
+
+O pack "Free Soldier & Orc" (autor **Zerie**, itch.io) está organizado em
+`art/tiny-rpg-pack/` — Soldier (43 quadros, 7 animações) e Orc (34 quadros, 6
+animações), ambos em células de 100×100. **A arte dele não é versionada**: a
+licença permite usar e modificar em projetos comerciais, mas proíbe redistribuir
+ou reenviar os arquivos, e este repositório é público. Ficam no Git apenas o
+`LEIA-ME.md` e o inventário `manifest.json`; o resto é ignorado pelo `.gitignore`.
+
+```bash
+# inventário do pack (lê os .aseprite e confere com as tiras exportadas)
+python3 tools/inventariar_pack.py \
+    --aseprite art/tiny-rpg-pack/aseprite/*.aseprite \
+    --conferir-pasta art/tiny-rpg-pack/soldier \
+    --conferir-pasta art/tiny-rpg-pack/orc-com-sombra \
+    --saida art/tiny-rpg-pack/manifest.json
+```
+
+Detalhes, licença e escala comparada com os sprites do jogo:
+[`art/tiny-rpg-pack/LEIA-ME.md`](art/tiny-rpg-pack/LEIA-ME.md).
 
 Requer `pillow`, `numpy` e `scipy` (`pip install pillow numpy scipy`) para as
 ferramentas em Python.
