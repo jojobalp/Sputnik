@@ -169,16 +169,58 @@ def alfa_do_fundo(recorte: Image.Image, tol: int = TOL_FUNDO,
                                        structure=np.ones((3, 3), bool))
 
     lum_fundo = float(np.median(lum[fundo])) if fundo.any() else 240.0
-    alfa = np.clip((lum_fundo - lum.astype(np.float32)) / max(12.0, lum_fundo * 0.42), 0.0, 1.0)
-    alfa = np.where(fundo, 0.0, alfa)
-    # halo: pixel claro, sem cor, logo acima do fundo (borda anti-aliasada). Só
-    # estes são atenuados — o miolo de uma magia branca é claro mas está longe
-    # da cor do fundo, então continua opaco.
-    halo = (~fundo) & (alfa < ALFA_SOLIDO) & (dist < TOL_HALO)
+    rampa = np.clip((lum_fundo - lum.astype(np.float32)) / max(12.0, lum_fundo * 0.42), 0.0, 1.0)
+
+    # Interior fica OPACO; a rampa de alfa vale só na primeira camada de pixels
+    # em volta do fundo (anti-alias). Sem isso, detalhe claro dentro do desenho
+    # — o miolo branco da bola de relâmpago — vira transparente por ser mais
+    # claro que o fundo da prancha.
+    em_volta = ndimage.binary_dilation(fundo, np.ones((3, 3), bool)) & ~fundo
+    alfa = np.ones(lum.shape, dtype=np.float32)
+    alfa[em_volta] = rampa[em_volta]
+    alfa[fundo] = 0.0
+    # halo claro colado no fundo: atenua só o que está nessa camada
+    halo = em_volta & (alfa < ALFA_SOLIDO) & (dist < TOL_HALO)
     alfa[halo] = np.clip(alfa[halo] - 0.25, 0.0, 1.0)
 
     rgba = np.dstack([np.asarray(recorte.convert('RGB')), (alfa * 255).astype(np.uint8)])
     return Image.fromarray(rgba.astype(np.uint8), 'RGBA')
+
+
+def remover_grade_interna(im: Image.Image, cobertura: float = 0.45,
+                          sat_max: int = 30, lum_min: float = 115.0,
+                          lum_max: float = 999.0) -> Image.Image:
+    """Apaga as linhas de grade que a prancha desenha DENTRO da célula.
+
+    Essas linhas são cinzas ou brancas (mais escuras ou mais claras que o fundo)
+    e atravessam a célula inteira; o personagem ocupa só um trecho. O critério é
+    a linearidade: linha que cobre boa parte da célula. Só os pixels neutros
+    (baixa saturação) são apagados, então o desenho que cruza a linha continua
+    inteiro. O miolo branco de uma magia é neutro, mas não é linear — por isso
+    sobrevive.
+    """
+    dados = np.asarray(im).copy()
+    alfa = dados[..., 3]
+    rgb = dados[..., :3].astype(np.int16)
+    lum = luminancia(rgb)
+    sat = saturacao(rgb)
+    cinza = (sat < sat_max) & (lum > lum_min) & (lum < lum_max)
+    apagados = 0
+    for horizontal in (True, False):
+        # linha horizontal: fração de cinza por LINHA (axis=1); vertical: por coluna
+        frac = cinza.mean(axis=1) if horizontal else cinza.mean(axis=0)
+        idx = np.where(frac >= cobertura)[0]
+        if idx.size == 0:
+            continue
+        mascara = np.zeros_like(cinza, dtype=bool)
+        if horizontal:
+            mascara[idx, :] = cinza[idx, :]
+        else:
+            mascara[:, idx] = cinza[:, idx]
+        alfa[mascara] = 0
+        apagados += int(mascara.sum())
+    dados[..., 3] = alfa
+    return Image.fromarray(dados, 'RGBA')
 
 
 def limpar_residuo(im: Image.Image, min_massa: int = MIN_MASSA,
@@ -216,6 +258,118 @@ def limpar_residuo(im: Image.Image, min_massa: int = MIN_MASSA,
         return Image.fromarray(np.dstack([dados[..., :3], np.zeros_like(a)]), 'RGBA')
     dados[..., 3] = np.where(np.isin(rot, manter), a, 0)
     return Image.fromarray(dados, 'RGBA')
+
+
+def vale_do_rotulo(img: Image.Image, ya: int, yb: int,
+                    minimo_rel: float = 0.55, maximo_rel: float = 0.96) -> int:
+    """Y onde o desenho termina — o vale de conteúdo antes do rótulo impresso.
+
+    A faixa do rótulo é o rodapé da célula, mas ela não tem altura fixa: com um
+    corte por porcentagem o pé do personagem (ou a sombra dele) entra no corte.
+    O que separa desenho de texto é o vazio entre os dois, e é ele que se procura
+    no último terço da célula.
+    """
+    dados = np.asarray(img.convert('RGB')).astype(np.int16)[ya:yb]
+    conteudo = (luminancia(dados) < LUM_FUNDO - 15) | (saturacao(dados) > SAT_CONTEUDO)
+    if conteudo.size == 0:
+        return yb
+    perfil = conteudo.sum(axis=1).astype(np.float64)
+    nucleo = np.ones(3) / 3.0
+    perfil = np.convolve(perfil, nucleo, mode='same')
+    altura = yb - ya
+    i0 = int(altura * minimo_rel)
+    i1 = max(i0 + 1, int(altura * maximo_rel))
+    if i1 - i0 < 2:
+        return yb
+    return ya + int(i0 + int(np.argmin(perfil[i0:i1])))
+
+
+def massas_por_celula(img: Image.Image, linhas: Sequence[Tuple[int, int]],
+                      colunas: Sequence[Tuple[int, int]], bases: Sequence[int],
+                      erosao: int = 2, dist_max: int = 6,
+                      min_massa: int = 150) -> Dict[Tuple[int, int], Tuple[List[Tuple[int, int, int, int]], int]]:
+    """Acha CADA desenho da prancha e diz a que célula ele pertence.
+
+    A grade da prancha é regular; o desenho não é — a bola de magia atravessa a
+    fronteira e sobra um pedaço na célula do vizinho. Aqui a decisão não é a
+    posição na grade, e sim o desenho: o conteúdo é afinado (erosão) até a grade
+    e o texto sumirem, cada massa que resta é rotulada e vai para a célula onde
+    está o seu CENTRO. Assim um quadro inteiro (corpo + magia + partículas) é
+    montado como união das massas dele, mesmo que uma massa passe da fronteira.
+    """
+    dados = np.asarray(img.convert('RGB')).astype(np.int16)
+    conteudo = (luminancia(dados) < LUM_FUNDO - 15) | (saturacao(dados) > SAT_CONTEUDO)
+    for (ya, yb), base in zip(linhas, bases):  # o rótulo (embaixo) não é desenho
+        conteudo[base:yb + 1] = False
+
+    nucleo = ndimage.binary_erosion(conteudo, np.ones((3, 3), bool), iterations=erosao)
+    rot, n = ndimage.label(nucleo, np.ones((3, 3), int))
+    if n == 0:
+        return {}
+    _, idx = ndimage.distance_transform_edt(~nucleo, return_indices=True)
+    dist = ndimage.distance_transform_edt(~nucleo)
+    rot_final = np.where(dist <= dist_max, rot[idx[0], idx[1]], 0)
+
+    # referência de área: só o que é DESENHO de verdade na máscara original
+    # (a franja de reconstrução em volta do núcleo não conta)
+    desenho_da_massa = rot_final > 0
+    por_celula: Dict[Tuple[int, int], Tuple[List[Tuple[int, int, int, int]], int]] = {}
+    for i in range(1, n + 1):
+        sel = rot_final == i
+        area_massa = int((conteudo & sel).sum())
+        if area_massa < min_massa:
+            continue
+        if area_massa < min_massa:
+            continue
+        ys, xs = np.where(sel)
+        cx, cy = int(xs.mean()), int(ys.mean())
+        j = next((k for k in range(len(linhas)) if linhas[k][0] <= cy <= linhas[k][1]), None)
+        i_ = next((k for k in range(len(colunas)) if colunas[k][0] <= cx <= colunas[k][1]), None)
+        if j is None or i_ is None:
+            continue
+        caixa = (int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max()))
+        caixas, area = por_celula.get((j, i_), ([], 0))
+        caixas.append(caixa)
+        por_celula[(j, i_)] = (caixas, area + area_massa)
+    return por_celula
+
+
+def ajustar_fronteiras(img: Image.Image, colunas: Sequence[Tuple[int, int]],
+                       topo: int, base: int, janela: int = 60,
+                       min_larg: int = 40) -> List[Tuple[int, int]]:
+    """Recoloca cada fronteira de coluna no vazio mais próximo, NESTA linha.
+
+    A grade da prancha é regular, mas o desenho não: partículas da magia
+    atravessam a fronteira e um pedaço do quadro fica na célula do vizinho. Como
+    a faixa vazia entre dois quadros existe e é larga, a fronteira vai para o
+    ponto de menor conteúdo dentro de uma janela em volta da posição original.
+    A numeração do topo é ignorada (só o miolo da célula entra na conta).
+    """
+    if janela <= 0 or len(colunas) < 2:
+        return list(colunas)
+    margem = int((base - topo) * 0.22)          # fora a numeração da célula
+    a0, a1 = topo + margem, base
+    if a1 - a0 < 8:
+        return list(colunas)
+    rgb = np.asarray(img.convert('RGB')).astype(np.int16)[a0:a1]
+    conteudo = (luminancia(rgb) < LUM_FUNDO - 15) | (saturacao(rgb) > SAT_CONTEUDO)
+    perfil = conteudo.sum(axis=0).astype(np.float64)
+    if perfil.size > 4:                          # suaviza p/ não cair em ruído
+        nucleo = np.ones(5) / 5.0
+        perfil = np.convolve(perfil, nucleo, mode='same')
+    novas = [(colunas[0][0], colunas[0][1])]
+    for k in range(1, len(colunas)):
+        limite = colunas[k][0]
+        esq = max(colunas[k - 1][0] + min_larg, limite - janela)
+        dir_ = min(colunas[k][1] - min_larg, limite + janela)
+        novo = limite
+        if esq < dir_:
+            trecho = perfil[esq:dir_]
+            if trecho.size:
+                novo = int(esq + int(np.argmin(trecho)))
+        novas[-1] = (novas[-1][0], novo)
+        novas.append((novo, colunas[k][1]))
+    return novas
 
 
 def cobertura(celula: Image.Image, extraido: Image.Image) -> float:
@@ -326,7 +480,13 @@ def main(argv=None) -> int:
     ap.add_argument('--entrada', required=True)
     ap.add_argument('--saida-dir', default='Sprite/Characters/casting')
     ap.add_argument('--mapa', default=None, help='JSON com as animações de cada linha')
-    ap.add_argument('--grade', choices=['auto', 'manual'], default='auto')
+    ap.add_argument('--grade', choices=['auto', 'manual', 'explicita', 'componentes'], default='auto')
+    ap.add_argument('--min-massa', type=int, default=150,
+                    help='px: massa mínima p/ contar como desenho no modo componentes')
+    ap.add_argument('--colunas-x', default=None,
+                    help='fronteiras verticais das colunas, ex.: "18,175,346,520,691,858,1049,1238"')
+    ap.add_argument('--linhas-y', default=None,
+                    help='fronteiras horizontais das linhas, ex.: "47,163,273,390,511,635,753"')
     ap.add_argument('--x0', type=int, default=0)
     ap.add_argument('--y0', type=int, default=0)
     ap.add_argument('--celula', default='148x72', help='largura x altura da célula (grade manual)')
@@ -334,6 +494,8 @@ def main(argv=None) -> int:
     ap.add_argument('--linhas', type=int, default=0, help='nº de linhas de animação (0 = todas)')
     ap.add_argument('--fracao-rotulo', type=float, default=FRACAO_ROTULO,
                     help='fração inferior da célula reservada ao rótulo (descartada)')
+    ap.add_argument('--ajustar-fronteiras', type=int, default=0, metavar='JANELA',
+                    help='px: procura o vazio mais próximo p/ cada fronteira de coluna (0 = desliga)')
     ap.add_argument('--forca-pico', type=float, default=0.55,
                     help='fração mínima da figura que precisa ter borda para ser linha de grade')
     ap.add_argument('--prefixo', default='')
@@ -346,7 +508,21 @@ def main(argv=None) -> int:
     W, H = img.size
     print(f'{args.entrada}: {W}x{H}')
 
-    if args.grade == 'auto':
+    if args.grade == 'componentes':
+        if not (args.colunas_x and args.linhas_y):
+            raise SystemExit('--grade componentes exige --colunas-x e --linhas-y')
+        cxs = [int(v) for v in args.colunas_x.split(',')]
+        lys = [int(v) for v in args.linhas_y.split(',')]
+        colunas = list(zip(cxs, cxs[1:]))
+        linhas = list(zip(lys, lys[1:]))
+    elif args.grade == 'explicita':
+        if not (args.colunas_x and args.linhas_y):
+            raise SystemExit('--grade explicita exige --colunas-x e --linhas-y')
+        cxs = [int(v) for v in args.colunas_x.split(',')]
+        lys = [int(v) for v in args.linhas_y.split(',')]
+        colunas = list(zip(cxs, cxs[1:]))
+        linhas = list(zip(lys, lys[1:]))
+    elif args.grade == 'auto':
         xs, ys = detectar_grade(img, args.forca_pico)
         colunas = faixas(xs, W)
         linhas = faixas(ys, H)
@@ -387,6 +563,20 @@ def main(argv=None) -> int:
         print('\n(diagnóstico: nada foi gravado)')
         return 0
 
+    massas = None
+    bases = None
+    if args.grade == 'componentes':
+        bases = [vale_do_rotulo(img, ya, yb) for ya, yb in linhas]
+        print('   fim do desenho por linha: ' +
+              ', '.join(f'L{j+1}={b}' for j, b in enumerate(bases)))
+        massas = massas_por_celula(img, linhas, colunas, bases,
+                                   min_massa=args.min_massa)
+        vazias = [(j + 1, i + 1) for j in range(len(linhas)) for i in range(len(colunas))
+                  if not massas.get((j, i))]
+        if vazias:
+            print('   ATENÇÃO: células sem desenho: ' +
+                  ', '.join(f'L{j}C{i}' for j, i in vazias))
+
     mapa = ler_mapa(args.mapa)
     os.makedirs(args.saida_dir, exist_ok=True)
     manifest = {'fonte': os.path.basename(args.entrada),
@@ -399,25 +589,46 @@ def main(argv=None) -> int:
         # descarta a faixa do rótulo, embaixo, e a numeração da célula, em cima
         corte = int((yb - ya) * args.fracao_rotulo)
         topo = ya + 2
-        base = yb - corte
+        base = bases[j] if bases is not None else yb - corte
         if base - topo < 12:
             continue
         nome_linha, rotulos = rotulos_da_linha(mapa, indice_linha + 1, len(colunas))
-        frames, usados, avisos = [], [], []
-        for i, (xa, xb) in enumerate(colunas):
-            celula = img.crop((xa + 2, topo, xb - 2, base))
+        colunas_linha = ajustar_fronteiras(img, colunas, topo, base, args.ajustar_fronteiras)
+        frames, usados, avisos, preservacao = [], [], [], 1.0
+        for i, (xa, xb) in enumerate(colunas_linha):
+            if massas is not None:
+                # recorte = união dos desenhos desta célula (não a grade)
+                dados_celula = massas.get((j, i))
+                if not dados_celula:
+                    continue
+                caixas, area_ref = dados_celula
+                x0 = max(0, min(c[0] for c in caixas) - FOLGA)
+                y0 = max(topo, min(c[1] for c in caixas) - FOLGA)
+                x1 = min(W, max(c[2] for c in caixas) + FOLGA + 1)
+                y1 = min(yb, max(c[3] for c in caixas) + FOLGA + 1)
+            else:
+                x0, y0, x1, y1 = xa + 2, topo, xb - 2, base
+            celula = img.crop((x0, y0, x1, y1))
             if celula.width < 12 or celula.height < 12:
                 continue
-            rec = limpar_residuo(alfa_do_fundo(celula, TOL_FUNDO))
+            rec = alfa_do_fundo(celula, TOL_FUNDO)
+            rec = remover_grade_interna(rec)
+            rec = limpar_residuo(rec)
             rec = aparar(rec)
             if rec.width <= 3 or rec.height <= 3:
                 continue
             rotulo = rotulos[i] if i < len(rotulos) else f'frame{i+1:02d}'
-            razao = cobertura(celula, rec)
+            if massas is not None:
+                # no modo componentes o que vale é a fração do DESENHO que ficou,
+                # não a fração da célula da grade (que contém desenho do vizinho)
+                razao = min(1.0, int((np.asarray(rec)[..., 3] > 24).sum()) / max(1, area_ref))
+            else:
+                razao = cobertura(celula, rec)
             if razao < 0.85:
                 avisos.append((rotulo, razao))
             frames.append(rec)
             usados.append(rotulo)
+            preservacao = min(preservacao, razao)
         if not frames:
             continue
         indice_linha += 1
@@ -432,8 +643,7 @@ def main(argv=None) -> int:
             gif(frames, os.path.join(args.saida_dir, f'{nome_linha}.gif'))
         manifest['animacoes'][nome_linha] = {
             'rotulos': usados,
-            'cobertura_minima': round(min((cobertura(img.crop((colunas[k][0] + 2, topo, colunas[k][1] - 2, base)), f)
-                                           for k, f in enumerate(frames)), default=1.0), 3),
+            'preservacao_minima': round(preservacao, 3),
             'celula': {'w': tam[0], 'h': tam[1]},
             'sheet': f'{nome_linha}.png',
             'frames': [f'frames/{nome_linha}/{args.prefixo}{r}.png' for r in usados],
