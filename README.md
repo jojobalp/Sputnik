@@ -11,6 +11,15 @@ python3 -m http.server 8080    # abra http://localhost:8080
 
 WASD/setas movem; o cajado ataca sozinho.
 
+Para ver a arte das pranchas (as 6 direções do bruxo rodando, os 42 quadros
+soltos e os elementos da cena) numa página só:
+
+```bash
+python3 tools/servir_previa.py 8081   # abre direto em /previa-animacoes.html
+```
+
+A página é `previa-animacoes.html` (também funciona em `http://localhost:8080/previa-animacoes.html`).
+
 ## Estrutura
 
 ```
