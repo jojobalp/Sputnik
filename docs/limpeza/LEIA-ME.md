@@ -41,6 +41,12 @@ Dependência: `pip install pillow`.
 | vampire | 49 | 198 px **invisíveis** mas com cor `#5e4e3a` (halo que vaza ao filtrar em atlas) | zerados para transparente puro |
 | enemies.aseprite | 162 cels | a fonte trazia a tag `skeleton2_movemen` (nome cortado) enquanto o JSON exportado dizia `skeleton2_movement` — na Unity o clipe sairia com o nome errado | renomeada para `skeleton2_movement` |
 
+Depois da limpeza, a arte do bruxo (que estava dentro de `enemies.aseprite`, na
+faixa de frames 47-95) foi separada em `Sprite/Characters/`: `bruxo.aseprite`
+(49 frames, 5 tags renomeadas para `bruxo_*`, numeração reiniciada em 0),
+`bruxo.png` e `bruxo.json`. Assim a Unity importa **só o protagonista**, sem os
+dois esqueletos junto — antes o arquivo trazia os três personagens e 16 tags.
+
 O `Floor.png` também foi auditado: é RGB puro (sem canal alfa), não é tileável
 (divergência média de ~15 níveis entre bordas opostas) e tem ~111 mil cores com
 36 mil usadas em um único pixel. O jogo já o desenha em modo *cover*, então nada

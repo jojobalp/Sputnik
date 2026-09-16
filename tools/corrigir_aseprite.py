@@ -229,6 +229,7 @@ class Aseprite:
 
     def serializar(self) -> bytes:
         saida = bytearray(self.dados[:128])
+        struct.pack_into('<H', saida, 6, len(self.frames))   # quantidade de frames
         for f in self.frames:
             chunks = bytearray()
             for ctype, body in f['chunks']:

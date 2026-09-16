@@ -7,7 +7,8 @@
  *   - o cabeçalho IHDR de cada PNG (largura, altura, tipo de cor);
  *   - se todo retângulo de frame do JSON cabe dentro do PNG;
  *   - se a soma das larguras dos frames bate com a largura do sheet (layout de tira);
- *   - se as tags apontam para frames existentes e não vazios;
+ *   - se as tags de animação existem (idle/movement/attack/take_damage/death);
+ *   - se os PNGs não têm pixels encostando na borda da célula (margem p/ atlas);
  *   - se nenhum frame tem conteúdo encostando na borda da célula (margem p/ atlas).
  *
  * Uso: node tools/verificar_assets.mjs
@@ -55,12 +56,17 @@ for (const caminho of caminhos) {
 }
 
 /* ------------------------------------------------------------- sheets -- */
-const sheets = ['skeleton1', 'skeleton2', 'vampire'];
+// o protagonista fica em Sprite/Characters, os inimigos em Sprite/Enemies
+const sheets = [
+  { nome: 'bruxo', pasta: 'Characters' },
+  { nome: 'skeleton1', pasta: 'Enemies' },
+  { nome: 'skeleton2', pasta: 'Enemies' },
+];
 const resumo = [];
 
-for (const nome of sheets) {
-  const png = join(raiz, 'Sprite', 'Enemies', `${nome}.png`);
-  const js = join(raiz, 'Sprite', 'Enemies', `${nome}.json`);
+for (const { nome, pasta } of sheets) {
+  const png = join(raiz, 'Sprite', pasta, `${nome}.png`);
+  const js = join(raiz, 'Sprite', pasta, `${nome}.json`);
   if (!existsSync(png) || !existsSync(js)) continue;
 
   const ihdr = lerIHDR(png);
@@ -97,6 +103,14 @@ for (const nome of sheets) {
   for (const t of tags) for (let i = t.from; i <= t.to; i++) cobertos.add(i);
   if (cobertos.size !== frames.length) {
     aviso(false, `${nome}: ${frames.length - cobertos.size} frame(s) sem tag de animação`);
+  }
+
+  const esperados = { bruxo: ['idle', 'movement', 'attack', 'take_damage', 'death'],
+                      skeleton1: ['idle', 'movement', 'attack', 'take_damage', 'death'],
+                      skeleton2: ['idle', 'movement', 'attack', 'take_damage', 'death', 'death2'] }[nome];
+  for (const curto of esperados) {
+    ok(tags.some((t) => t.name === `${nome}_${curto}` || t.name.endsWith('_' + curto)),
+      `${nome}.json: falta a tag de ${curto}`);
   }
 
   resumo.push({

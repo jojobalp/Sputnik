@@ -68,6 +68,7 @@ addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
 
 /* ---------------------------------------------------------------- estado -- */
 let player, enemies, shots, orbs, particles, trees, game, last = 0;
+let playerMoving = false;   // usado para escolher idle/movement do bruxo
 
 const upgrades = [
   { name: 'Projéteis Adicionais', desc: 'Dispara +1 feitiço simultâneo em leque.', icon: '✦', fn: () => game.bullets++ },
@@ -78,21 +79,36 @@ const upgrades = [
 ];
 
 /* Cada tipo de inimigo aponta para um sheet exportado do Aseprite. Os raios de
- * colisão (r) são os mesmos do jogo original; scale só afeta o desenho. */
+ * colisão (r) são os mesmos do jogo original; scale só afeta o desenho.
+ * O bruxo (personagem principal) saiu da lista: agora ele tem sprite próprio em
+ * Sprite/Characters/bruxo.png. */
 const ENEMY_TYPES = {
   goblin: { sheet: 'skeleton1', r: 11, hp: 1, spd: .7,  scale: 1.6 },
-  runner: { sheet: 'vampire',   r: 9,  hp: 1, spd: 1.5, scale: 1.4 },
-  elite:  { sheet: 'skeleton2', r: 16, hp: 7, spd: 1.05, scale: 2.1 },
+  runner: { sheet: 'skeleton2', r: 9,  hp: 1, spd: 1.5, scale: 1.3 },
+  elite:  { sheet: 'skeleton2', r: 16, hp: 7, spd: 1.05, scale: 2.4 },
 };
+
+/* Personagem principal: mesma convenção dos inimigos — célula 32x32, âncora nos
+ * pés (o art tem de 15 a 20 px de altura dentro da célula) e espelhamento
+ * horizontal. O ataque do bruxo dura 1,6 s no Aseprite, mas o cajado dispara a
+ * cada 0,65 s: tocar mais rápido evita que a animação fique reiniciando. */
+const PLAYER_SHEET = 'bruxo';
+const PLAYER = { r: 13, scale: 2.2, animSpeed: { attack: 2.4 } };
 
 function reset() {
   game = { time: 0, wave: 1, kills: 0, level: 1, xp: 0, next: 7, hp: 100, bullets: 1, aoe: 18, magnet: 55, speed: 2.5, shield: 1, spawn: 0, shoot: 0 };
-  player = { x: W / 2, y: H / 2, r: 13, inv: 0 };
+  const sheet = Assets.sheet(PLAYER_SHEET);
+  player = {
+    x: W / 2, y: H / 2, r: PLAYER.r, inv: 0, face: 1,
+    sheet, anim: sheet && sheet.ok ? new Assets.Animation(sheet, 'idle') : null,
+    dying: false, dead: false,
+  };
   enemies = []; shots = []; orbs = []; particles = []; trees = [];
   for (let i = 0; i < 38; i++) {
     let x = Math.random() * W, y = Math.random() * H;
     if (Math.hypot(x - player.x, y - player.y) > 130) trees.push({ x, y, r: 10 + Math.random() * 16, type: Math.random() > .25 ? 'tree' : 'rock' });
   }
+  playerMoving = false;
   ui.gameover.classList.add('hidden');
   ui.levelup.classList.add('hidden');
 }
@@ -120,9 +136,16 @@ function shoot() {
   let target = alive.reduce((a, b) =>
     Math.hypot(a.x - player.x, a.y - player.y) < Math.hypot(b.x - player.x, b.y - player.y) ? a : b);
   let base = Math.atan2(target.y - player.y, target.x - player.x);
+
+  // vira para o alvo e dá o golpe de cajado
+  player.face = Math.cos(base) >= 0 ? 1 : -1;
+  if (player.anim) { player.anim.set('attack'); player.anim.restart(); }
+
+  // a magia sai da ponta do cajado, não do meio do corpo
+  const ox = player.x + Math.cos(base) * 14, oy = player.y + Math.sin(base) * 14;
   for (let i = 0; i < game.bullets; i++) {
     let spread = (i - (game.bullets - 1) / 2) * .22;
-    shots.push({ x: player.x, y: player.y, vx: Math.cos(base + spread) * 5, vy: Math.sin(base + spread) * 5, life: 80 });
+    shots.push({ x: ox, y: oy, vx: Math.cos(base + spread) * 5, vy: Math.sin(base + spread) * 5, life: 80 });
   }
 }
 
@@ -132,6 +155,20 @@ function update(dt) {
   game.spawn -= dt; game.shoot -= dt;
   player.inv = Math.max(0, player.inv - dt);
 
+  /* --- morte do bruxo: toca a animação e só então mostra o fim de jogo --- */
+  if (player.dying) {
+    if (player.anim) player.anim.advance(dt * 1000 * playerAnimSpeed('death'));
+    playerMoving = false;
+    if (!player.anim || player.anim.finished) {
+      player.dying = false;
+      player.dead = true;
+      ui.finalStats.textContent = `Você alcançou a onda ${game.wave} e derrotou ${game.kills} criaturas.`;
+      ui.gameover.classList.remove('hidden');
+    }
+    updateHUD();
+    return;
+  }
+
   if (game.spawn <= 0) { spawn(); game.spawn = Math.max(.18, 1.1 - game.time / 500); }
   if (game.shoot <= 0) { shoot(); game.shoot = .65; }
 
@@ -140,6 +177,8 @@ function update(dt) {
   let len = Math.hypot(dx, dy) || 1;
   player.x = Math.max(25, Math.min(W - 25, player.x + dx / len * game.speed));
   player.y = Math.max(55, Math.min(H - 25, player.y + dy / len * game.speed));
+  if (dx) player.face = dx > 0 ? 1 : -1;      // olha para onde anda
+  playerMoving = !!(dx || dy);
 
   for (let s of shots) { s.x += s.vx; s.y += s.vy; s.life -= dt * 60; }
   shots = shots.filter((s) => s.life > 0);
@@ -170,6 +209,13 @@ function update(dt) {
     if (dist < e.r + player.r && player.inv <= 0) {
       if (game.shield) { game.shield--; player.inv = 1.2; } else game.hp -= 18;
       player.inv = 1.2;
+      if (game.hp <= 0) {                       // golpe final: morre com animação
+        player.dying = true;
+        if (player.anim) { player.anim.set('death'); player.anim.restart(); }
+      } else if (player.anim) {                 // reação ao levar dano
+        player.anim.set('take_damage');
+        player.anim.restart();
+      }
     }
   }
 
@@ -211,11 +257,24 @@ function update(dt) {
   particles = particles.filter((p) => p.life > 0);
 
   if (game.xp >= game.next) { game.xp -= game.next; game.next = Math.floor(game.next * 1.35); game.level++; pauseLevel(); }
-  if (game.hp <= 0) {
-    ui.finalStats.textContent = `Você alcançou a onda ${game.wave} e derrotou ${game.kills} criaturas.`;
-    ui.gameover.classList.remove('hidden');
-  }
+  updatePlayerAnim(dt);
   updateHUD();
+}
+
+/* ------------------------------------------------------- animação do herói -- */
+/* Escolhe a tag pelo que está acontecendo, dando prioridade para os estados de
+ * uma vez só (ataque / dano), que não podem ser interrompidos no meio. */
+function playerAnimSpeed(tag) { return PLAYER.animSpeed[tag] || 1; }
+
+function updatePlayerAnim(dt) {
+  const a = player.anim;
+  if (!a || player.dying) return;
+  if (!a.finished && (a.name === 'attack' || a.name === 'take_damage')) {   // toca até o fim
+    a.advance(dt * 1000 * playerAnimSpeed(a.name));
+    return;
+  }
+  a.set(playerMoving ? 'movement' : 'idle');
+  a.advance(dt * 1000);
 }
 
 /* ------------------------------------------------------------ level / HUD -- */
@@ -255,6 +314,18 @@ function drawBackground() {
   for (let i = 0; i < 120; i++) { let x = (i * 83) % W, y = (i * 47) % H; ctx.fillRect(x, y, 2, 2); }
 }
 
+/* Desenha um frame de sheet ancorado nos pés, com espelhamento horizontal.
+ * Usado pelo personagem e pelos inimigos — mesma convenção de arte. */
+function drawSheet(sheet, anim, x, feetY, scale, face) {
+  const rct = anim.rect, dw = rct.w * scale, dh = rct.h * scale;
+  ctx.save();
+  ctx.translate(x, feetY);
+  ctx.scale(face, 1);
+  ctx.imageSmoothingEnabled = false;      // pixel art nítida
+  ctx.drawImage(sheet.image, rct.x, rct.y, rct.w, rct.h, -dw / 2, -dh, dw, dh);
+  ctx.restore();
+}
+
 function drawEnemy(e) {
   const feetY = e.y + e.r;
   // sombra de contato com o chão
@@ -264,14 +335,7 @@ function drawEnemy(e) {
   ctx.fill();
 
   if (e.anim && e.sheet && e.sheet.ok) {
-    const rct = e.anim.rect, s = e.scale;
-    const dw = rct.w * s, dh = rct.h * s;
-    ctx.save();
-    ctx.translate(e.x, feetY);
-    ctx.scale(e.face, 1);                 // vira o sprite quando anda p/ esquerda
-    ctx.imageSmoothingEnabled = false;    // pixel art nítida
-    ctx.drawImage(e.sheet.image, rct.x, rct.y, rct.w, rct.h, -dw / 2, -dh, dw, dh);
-    ctx.restore();
+    drawSheet(e.sheet, e.anim, e.x, feetY, e.scale, e.face);
   } else {
     // fallback: o desenho vetorial original
     ctx.fillStyle = e.type === 'elite' ? '#db725d' : e.type === 'runner' ? '#ddad54' : '#a7c85e';
@@ -325,15 +389,46 @@ function draw() {
 
   for (let e of enemies) drawEnemy(e);
 
-  ctx.save();
-  ctx.translate(player.x, player.y);
-  ctx.fillStyle = player.inv % 0.2 > .1 ? '#fff' : '#7558a8';
-  ctx.beginPath(); ctx.arc(0, 0, player.r, 0, 7); ctx.fill();
-  ctx.fillStyle = '#d6c3ad'; ctx.fillRect(-9, -12, 18, 5);
-  ctx.fillStyle = '#c5ed72'; ctx.rotate(-.6); ctx.fillRect(8, -2, 22, 3);
-  ctx.restore();
+  drawPlayer();
 
   requestAnimationFrame(loop);
+}
+
+/* O bruxo: sprite quando disponível, círculo + cajado (placeholder original)
+ * como fallback. A âncora é a mesma dos inimigos — os pés. */
+const PLAYER_FALLBACK = { body: '#7558a8', hit: '#fff', hat: '#d6c3ad', staff: '#c5ed72' };
+
+function drawPlayer() {
+  const feetY = player.y + player.r;
+
+  ctx.fillStyle = 'rgba(4,10,7,0.35)';        // sombra de contato
+  ctx.beginPath();
+  ctx.ellipse(player.x, feetY, player.r * .95, player.r * .38, 0, 0, 7);
+  ctx.fill();
+
+  // pisca enquanto está invulnerável depois de levar dano
+  const piscando = player.inv > 0 && Math.floor(player.inv * 12) % 2 === 0;
+  ctx.globalAlpha = piscando ? .35 : 1;
+
+  if (player.anim && player.sheet && player.sheet.ok && player.anim.rect) {
+    drawSheet(player.sheet, player.anim, player.x, feetY, PLAYER.scale, player.face);
+  } else {
+    ctx.save();
+    ctx.translate(player.x, player.y);
+    ctx.fillStyle = piscando ? PLAYER_FALLBACK.hit : PLAYER_FALLBACK.body;
+    ctx.beginPath(); ctx.arc(0, 0, player.r, 0, 7); ctx.fill();
+    ctx.fillStyle = PLAYER_FALLBACK.hat; ctx.fillRect(-9, -12, 18, 5);
+    ctx.fillStyle = PLAYER_FALLBACK.staff; ctx.rotate(-.6); ctx.fillRect(8, -2, 22, 3);
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+
+  // escudo arcano ativo: aro em volta do bruxo
+  if (game.shield > 0 && !player.dead) {
+    ctx.strokeStyle = 'rgba(180,160,255,0.5)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(player.x, player.y, player.r + 6, 0, 7); ctx.stroke();
+  }
 }
 
 function loop(t) {

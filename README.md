@@ -16,11 +16,23 @@ WASD/setas movem; o cajado ataca sozinho.
 ```
 index.html, style.css, game.js   o jogo (Canvas 2D, sem build)
 assets.js                        carrega os sprites do Aseprite (PNG + JSON)
-Sprite/Enemies/                  sheets exportados + os .aseprite de origem
+Sprite/Characters/               o bruxo (protagonista): .aseprite + PNG + JSON
+Sprite/Enemies/                  inimigos: .aseprite de origem + PNG + JSON
 Sprite/Background/Floor.png      piso (desenhado em modo "cover")
-tools/                           limpeza e verificação dos assets
+tools/                           limpeza, verificação e testes dos assets
 docs/limpeza/                    relatório da limpeza dos sprites
+docs/unity/                      como importar o personagem na Unity
 ```
+
+## Personagem
+
+O protagonista é o bruxo (`Sprite/Characters/`): 49 frames em células de 32x32
+com as tags `idle`, `movement`, `attack`, `take_damage` e `death`. Ele usa a mesma
+convenção dos inimigos — âncora nos pés e espelhamento horizontal — e cai no
+desenho vetorial antigo (círculo + cajado) se o sprite não carregar.
+
+Instruções de importação na Unity (Aseprite Importer ou Sprite Editor), PPU,
+pivot e mapeamento das animações: [`docs/unity/LEIA-ME.md`](docs/unity/LEIA-ME.md).
 
 ## Assets
 
@@ -38,6 +50,10 @@ margem até a borda da célula, nome de tag truncado na fonte) estão descritas 
 python3 tools/limpar_sprites.py --dir Sprite/Enemies --report
 node tools/verificar_assets.mjs
 python3 tools/verificar_aseprite.py --aseprite Sprite/Enemies/enemies.aseprite
+python3 tools/verificar_aseprite.py --aseprite Sprite/Characters/bruxo.aseprite --sheets-dir Sprite/Characters
+
+# o bruxo carrega, anima, ataca, reage ao dano e morre (sem navegador)
+node tools/smoke_personagem.mjs
 ```
 
 Requer `pillow` (`pip install pillow`) para as ferramentas em Python.
