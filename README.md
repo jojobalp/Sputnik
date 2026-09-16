@@ -67,6 +67,9 @@ python3 tools/verificar_aseprite.py --aseprite Sprite/Characters/bruxo.aseprite 
 
 # o bruxo carrega, anima, ataca, reage ao dano e morre (sem navegador)
 node tools/smoke_personagem.mjs
+
+# a página de prévia monta os cartões, roda os quadros e responde aos controles
+node tools/smoke_previa.mjs
 ```
 
 ### Pranchas de referência → arte limpa
