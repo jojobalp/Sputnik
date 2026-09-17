@@ -1,0 +1,220 @@
+{
+  "fonte": "bruxo-casting.jpg",
+  "grade": {
+    "colunas": [
+      [
+        18,
+        175
+      ],
+      [
+        175,
+        346
+      ],
+      [
+        346,
+        520
+      ],
+      [
+        520,
+        691
+      ],
+      [
+        691,
+        858
+      ],
+      [
+        858,
+        1049
+      ],
+      [
+        1049,
+        1238
+      ]
+    ],
+    "linhas": [
+      [
+        47,
+        163
+      ],
+      [
+        163,
+        273
+      ],
+      [
+        273,
+        390
+      ],
+      [
+        390,
+        511
+      ],
+      [
+        511,
+        635
+      ],
+      [
+        635,
+        753
+      ]
+    ],
+    "fracao_rotulo": 0.22
+  },
+  "animacoes": {
+    "sul": {
+      "rotulos": [
+        "idle",
+        "charge_1",
+        "charge_2",
+        "cast",
+        "release",
+        "travel",
+        "recovery"
+      ],
+      "preservacao_minima": 0.907,
+      "celula": {
+        "w": 145,
+        "h": 76
+      },
+      "sheet": "sul.png",
+      "frames": [
+        "frames/sul/idle.png",
+        "frames/sul/charge_1.png",
+        "frames/sul/charge_2.png",
+        "frames/sul/cast.png",
+        "frames/sul/release.png",
+        "frames/sul/travel.png",
+        "frames/sul/recovery.png"
+      ]
+    },
+    "norte": {
+      "rotulos": [
+        "idle",
+        "charge_1",
+        "charge_2",
+        "cast",
+        "release",
+        "travel",
+        "recovery"
+      ],
+      "preservacao_minima": 0.909,
+      "celula": {
+        "w": 147,
+        "h": 79
+      },
+      "sheet": "norte.png",
+      "frames": [
+        "frames/norte/idle.png",
+        "frames/norte/charge_1.png",
+        "frames/norte/charge_2.png",
+        "frames/norte/cast.png",
+        "frames/norte/release.png",
+        "frames/norte/travel.png",
+        "frames/norte/recovery.png"
+      ]
+    },
+    "norte_repetida": {
+      "rotulos": [
+        "idle",
+        "charge_1",
+        "charge_2",
+        "cast",
+        "release",
+        "travel",
+        "recovery"
+      ],
+      "preservacao_minima": 0.895,
+      "celula": {
+        "w": 155,
+        "h": 79
+      },
+      "sheet": "norte_repetida.png",
+      "frames": [
+        "frames/norte_repetida/idle.png",
+        "frames/norte_repetida/charge_1.png",
+        "frames/norte_repetida/charge_2.png",
+        "frames/norte_repetida/cast.png",
+        "frames/norte_repetida/release.png",
+        "frames/norte_repetida/travel.png",
+        "frames/norte_repetida/recovery.png"
+      ]
+    },
+    "leste": {
+      "rotulos": [
+        "idle",
+        "charge_1",
+        "charge_2",
+        "cast",
+        "release",
+        "travel",
+        "recovery"
+      ],
+      "preservacao_minima": 0.906,
+      "celula": {
+        "w": 157,
+        "h": 81
+      },
+      "sheet": "leste.png",
+      "frames": [
+        "frames/leste/idle.png",
+        "frames/leste/charge_1.png",
+        "frames/leste/charge_2.png",
+        "frames/leste/cast.png",
+        "frames/leste/release.png",
+        "frames/leste/travel.png",
+        "frames/leste/recovery.png"
+      ]
+    },
+    "oeste": {
+      "rotulos": [
+        "idle",
+        "charge_1",
+        "charge_2",
+        "cast",
+        "release",
+        "travel",
+        "recovery"
+      ],
+      "preservacao_minima": 0.894,
+      "celula": {
+        "w": 165,
+        "h": 89
+      },
+      "sheet": "oeste.png",
+      "frames": [
+        "frames/oeste/idle.png",
+        "frames/oeste/charge_1.png",
+        "frames/oeste/charge_2.png",
+        "frames/oeste/cast.png",
+        "frames/oeste/release.png",
+        "frames/oeste/travel.png",
+        "frames/oeste/recovery.png"
+      ]
+    },
+    "norte_2": {
+      "rotulos": [
+        "idle",
+        "charge_1",
+        "charge_2",
+        "cast",
+        "release",
+        "post_cast",
+        "return_ready"
+      ],
+      "preservacao_minima": 0.889,
+      "celula": {
+        "w": 165,
+        "h": 90
+      },
+      "sheet": "norte_2.png",
+      "frames": [
+        "frames/norte_2/idle.png",
+        "frames/norte_2/charge_1.png",
+        "frames/norte_2/charge_2.png",
+        "frames/norte_2/cast.png",
+        "frames/norte_2/release.png",
+        "frames/norte_2/post_cast.png",
+        "frames/norte_2/return_ready.png"
+      ]
+    }
+  }
+}

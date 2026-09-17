@@ -1,0 +1,18 @@
+{
+  "titulo": "Top-down wizard casting (lightning ball)",
+  "estrutura": "7 colunas de animação + coluna de referência à direita; 6 linhas",
+  "observacoes": [
+    "As linhas 2, 3 e 6 vêm rotuladas 'N' na prancha. Provavelmente a linha 3 é uma repetição gerada pela IA — confirme se ela deveria ser 'S' (costas) ou 'E'.",
+    "As colunas 2 e 3 são dois estágios da mesma carga (rótulo CHARGE repetido): nomeadas charge_1 e charge_2.",
+    "Na última linha os dois últimos quadros mudam de nome: POST-CASTING/RECOIL e RETURN TO READY.",
+    "A coluna de referência (Original S/N/E/W) não é animação: use --colunas 7 para ignorá-la."
+  ],
+  "linhas": [
+    { "nome": "sul",            "rotulo_prancha": "S", "sequencia": ["idle", "charge_1", "charge_2", "cast", "release", "travel", "recovery"] },
+    { "nome": "norte",          "rotulo_prancha": "N", "sequencia": ["idle", "charge_1", "charge_2", "cast", "release", "travel", "recovery"] },
+    { "nome": "norte_repetida", "rotulo_prancha": "N", "sequencia": ["idle", "charge_1", "charge_2", "cast", "release", "travel", "recovery"] },
+    { "nome": "leste",          "rotulo_prancha": "E", "sequencia": ["idle", "charge_1", "charge_2", "cast", "release", "travel", "recovery"] },
+    { "nome": "oeste",          "rotulo_prancha": "W", "sequencia": ["idle", "charge_1", "charge_2", "cast", "release", "travel", "recovery"] },
+    { "nome": "norte_2",        "rotulo_prancha": "N", "sequencia": ["idle", "charge_1", "charge_2", "cast", "release", "post_cast", "return_ready"] }
+  ]
+}

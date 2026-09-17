@@ -1,0 +1,47 @@
+{
+  "pack": "Tiny RPG Character Asset Pack 01 v2.0 (Free Soldier&Orc)",
+  "autor": "Zerie",
+  "origem": "https://zerie.itch.io/tiny-rpg-character-asset-pack",
+  "por_que": [
+    "A arte deste pack NÃO entra no Git (licença: proíbe redistribuir/reenviar).",
+    "Este mapa + tools/importar_pack.py geram os sheets no formato do jogo a",
+    "partir dos .aseprite que o pack traz — quem clonar o repositório baixa o",
+    "pack no link acima e roda o importador para recriar os arquivos."
+  ],
+  "celula": {
+    "w": 64,
+    "h": 64,
+    "margem_base": 5
+  },
+  "personagens": [
+    {
+      "nome": "soldier",
+      "aseprite": "art/tiny-rpg-pack/aseprite/Soldier.aseprite",
+      "remover_camadas": ["shadow"],
+      "animacoes": {
+        "idle": "Idle",
+        "movement": "Walk",
+        "attack": "Attack03",
+        "take_damage": "Hurt",
+        "death": "Death"
+      }
+    },
+    {
+      "nome": "orc",
+      "aseprite": "art/tiny-rpg-pack/aseprite/Orc.aseprite",
+      "remover_camadas": ["shadow"],
+      "animacoes": {
+        "idle": "Idle",
+        "movement": "Walk",
+        "attack": "Attack01",
+        "take_damage": "Hurt",
+        "death": "Death"
+      }
+    }
+  ],
+  "projetil": {
+    "nome": "flecha",
+    "png": "art/tiny-rpg-pack/flecha/Arrow01(100x100).png",
+    "celula": 32
+  }
+}

@@ -1,0 +1,390 @@
+{
+  "pack": "Tiny RPG Character Asset Pack 01 v2.0 (Free Soldier&Orc)",
+  "personagens": {
+    "Orc": {
+      "aseprite": "art/tiny-rpg-pack/aseprite/Orc.aseprite",
+      "canvas": [
+        100,
+        100
+      ],
+      "quadros": 34,
+      "animacoes": [
+        {
+          "nome": "Idle",
+          "quadros": 6,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 600,
+          "caixa": [
+            43,
+            41,
+            65,
+            59
+          ]
+        },
+        {
+          "nome": "Walk",
+          "quadros": 8,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 800,
+          "caixa": [
+            43,
+            41,
+            65,
+            59
+          ]
+        },
+        {
+          "nome": "Attack01",
+          "quadros": 6,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 600,
+          "caixa": [
+            36,
+            33,
+            72,
+            61
+          ]
+        },
+        {
+          "nome": "Attack02",
+          "quadros": 6,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 600,
+          "caixa": [
+            36,
+            33,
+            73,
+            65
+          ]
+        },
+        {
+          "nome": "Hurt",
+          "quadros": 4,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 400,
+          "caixa": [
+            42,
+            42,
+            64,
+            59
+          ]
+        },
+        {
+          "nome": "Death",
+          "quadros": 4,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            600
+          ],
+          "duracao_ms": 900,
+          "caixa": [
+            36,
+            39,
+            65,
+            59
+          ]
+        }
+      ],
+      "desenho": {
+        "caixa": [
+          36,
+          33,
+          73,
+          65
+        ],
+        "largura": 38,
+        "altura": 33,
+        "pe": 65,
+        "centro_x": 54.5
+      },
+      "conferencia_tiras": [
+        {
+          "animacao": "Idle",
+          "tira": "art/tiny-rpg-pack/orc-com-sombra/Orc_Idle.png",
+          "quadros_na_tira": 6,
+          "quadros_na_fonte": 6,
+          "quadros_identicos": 6
+        },
+        {
+          "animacao": "Walk",
+          "tira": "art/tiny-rpg-pack/orc-com-sombra/Orc_Walk.png",
+          "quadros_na_tira": 8,
+          "quadros_na_fonte": 8,
+          "quadros_identicos": 8
+        },
+        {
+          "animacao": "Attack01",
+          "tira": "art/tiny-rpg-pack/orc-com-sombra/Orc_Attack01.png",
+          "quadros_na_tira": 6,
+          "quadros_na_fonte": 6,
+          "quadros_identicos": 6
+        },
+        {
+          "animacao": "Attack02",
+          "tira": "art/tiny-rpg-pack/orc-com-sombra/Orc_Attack02.png",
+          "quadros_na_tira": 6,
+          "quadros_na_fonte": 6,
+          "quadros_identicos": 5
+        },
+        {
+          "animacao": "Hurt",
+          "tira": "art/tiny-rpg-pack/orc-com-sombra/Orc_Hurt.png",
+          "quadros_na_tira": 4,
+          "quadros_na_fonte": 4,
+          "quadros_identicos": 4
+        },
+        {
+          "animacao": "Death",
+          "tira": "art/tiny-rpg-pack/orc-com-sombra/Orc_Death.png",
+          "quadros_na_tira": 4,
+          "quadros_na_fonte": 4,
+          "quadros_identicos": 4
+        }
+      ]
+    },
+    "Soldier": {
+      "aseprite": "art/tiny-rpg-pack/aseprite/Soldier.aseprite",
+      "canvas": [
+        100,
+        100
+      ],
+      "quadros": 43,
+      "animacoes": [
+        {
+          "nome": "Idle",
+          "quadros": 6,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 600,
+          "caixa": [
+            41,
+            38,
+            57,
+            59
+          ]
+        },
+        {
+          "nome": "Walk",
+          "quadros": 8,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 800,
+          "caixa": [
+            41,
+            38,
+            57,
+            59
+          ]
+        },
+        {
+          "nome": "Attack01",
+          "quadros": 6,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 600,
+          "caixa": [
+            36,
+            33,
+            69,
+            59
+          ]
+        },
+        {
+          "nome": "Attack02",
+          "quadros": 6,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 600,
+          "caixa": [
+            41,
+            31,
+            69,
+            59
+          ]
+        },
+        {
+          "nome": "Attack03",
+          "quadros": 9,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 900,
+          "caixa": [
+            41,
+            38,
+            76,
+            59
+          ]
+        },
+        {
+          "nome": "Hurt",
+          "quadros": 4,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            100
+          ],
+          "duracao_ms": 400,
+          "caixa": [
+            40,
+            39,
+            57,
+            59
+          ]
+        },
+        {
+          "nome": "Death",
+          "quadros": 4,
+          "quadros_ms": [
+            100,
+            100,
+            100,
+            600
+          ],
+          "duracao_ms": 900,
+          "caixa": [
+            41,
+            39,
+            67,
+            59
+          ]
+        }
+      ],
+      "desenho": {
+        "caixa": [
+          36,
+          31,
+          76,
+          59
+        ],
+        "largura": 41,
+        "altura": 29,
+        "pe": 59,
+        "centro_x": 56.0
+      },
+      "conferencia_tiras": [
+        {
+          "animacao": "Idle",
+          "tira": "art/tiny-rpg-pack/soldier/Soldier_Idle.png",
+          "quadros_na_tira": 6,
+          "quadros_na_fonte": 6,
+          "quadros_identicos": 6
+        },
+        {
+          "animacao": "Walk",
+          "tira": "art/tiny-rpg-pack/soldier/Soldier_Walk.png",
+          "quadros_na_tira": 8,
+          "quadros_na_fonte": 8,
+          "quadros_identicos": 8
+        },
+        {
+          "animacao": "Attack01",
+          "tira": "art/tiny-rpg-pack/soldier/Soldier_Attack01.png",
+          "quadros_na_tira": 6,
+          "quadros_na_fonte": 6,
+          "quadros_identicos": 6
+        },
+        {
+          "animacao": "Attack02",
+          "tira": "art/tiny-rpg-pack/soldier/Soldier_Attack02.png",
+          "quadros_na_tira": 6,
+          "quadros_na_fonte": 6,
+          "quadros_identicos": 6
+        },
+        {
+          "animacao": "Attack03",
+          "tira": "art/tiny-rpg-pack/soldier/Soldier_Attack03.png",
+          "quadros_na_tira": 9,
+          "quadros_na_fonte": 9,
+          "quadros_identicos": 9
+        },
+        {
+          "animacao": "Hurt",
+          "tira": "art/tiny-rpg-pack/soldier/Soldier_Hurt.png",
+          "quadros_na_tira": 4,
+          "quadros_na_fonte": 4,
+          "quadros_identicos": 4
+        },
+        {
+          "animacao": "Death",
+          "tira": "art/tiny-rpg-pack/soldier/Soldier_Death.png",
+          "quadros_na_tira": 4,
+          "quadros_na_fonte": 4,
+          "quadros_identicos": 4
+        }
+      ]
+    }
+  }
+}

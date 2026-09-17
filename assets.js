@@ -2,7 +2,8 @@
 /*
  * assets.js — camada de carregamento e animação dos sprites Aseprite.
  *
- * Lê os pares PNG+JSON exportados pelo Aseprite (Sprite/Enemies/*) e o piso
+ * Lê os pares PNG+JSON exportados pelo Aseprite (Sprite/Characters/* para o
+ * personagem, Sprite/Enemies/* para os inimigos) e o piso
  * (Sprite/Background/Floor.png). Cada sheet vira um objeto SpriteSheet com:
  *   - frames: retângulos na ordem correta (ordenados pelo sufixo numérico)
  *   - tags:   nome da animação -> { from, to }
@@ -15,12 +16,23 @@
 const Assets = (() => {
   const BASE = 'Sprite/';
 
+  /* `opcional` marca os sheets que vêm de um pack de terceiros e não entram no
+   * repositório por licença: quem clona roda `python3 tools/importar_pack.py`
+   * (veja art/tiny-rpg-pack/LEIA-ME.md) para gerá-los em Sprite/Enemies/. Sem
+   * eles o jogo continua rodando, com o desenho vetorial de fallback nos tipos
+   * correspondentes. */
   const MANIFEST = {
     background: BASE + 'Background/Floor.png',
     sheets: [
+      // protagonista
+      { key: 'bruxo',     png: BASE + 'Characters/bruxo.png',     json: BASE + 'Characters/bruxo.json'     },
+      // inimigos
       { key: 'skeleton1', png: BASE + 'Enemies/skeleton1.png', json: BASE + 'Enemies/skeleton1.json' },
       { key: 'skeleton2', png: BASE + 'Enemies/skeleton2.png', json: BASE + 'Enemies/skeleton2.json' },
-      { key: 'vampire',   png: BASE + 'Enemies/vampire.png',   json: BASE + 'Enemies/vampire.json'   },
+      // inimigos do pack Tiny RPG + a flecha do soldado (opcional)
+      { key: 'soldier',   png: BASE + 'Enemies/soldier.png',   json: BASE + 'Enemies/soldier.json'   },   // opcional
+      { key: 'orc',       png: BASE + 'Enemies/orc.png',       json: BASE + 'Enemies/orc.json'       },   // opcional
+      { key: 'flecha',    png: BASE + 'Enemies/flecha.png',    json: BASE + 'Enemies/flecha.json'    },   // opcional
     ],
   };
 
@@ -89,11 +101,14 @@ const Assets = (() => {
   class Animation {
     constructor(sheet, tagName) {
       this.sheet = sheet;
-      this.set(sheet.resolveTag(tagName));
+      this.set(tagName);
     }
 
+    /* this.tag  = nome resolvido no sheet (ex.: 'bruxo_attack')
+     * this.name = nome pedido pelo jogo (ex.: 'attack') — use este para comparar */
     set(tagName) {
       const tag = this.sheet ? this.sheet.resolveTag(tagName) : null;
+      this.name = tagName;
       if (!tag) { this.tag = null; this.frame = 0; this.t = 0; this.done = true; return; }
       if (this.tag === tag) return;
       this.tag = tag;
@@ -103,6 +118,14 @@ const Assets = (() => {
     }
 
     get finished() { return this.done; }
+
+    // Recomeça a animação atual (usado por golpes: ataque e reação a dano).
+    restart() {
+      if (this.tag == null) { this.done = true; return; }
+      this.frame = this.from;
+      this.t = 0;
+      this.done = false;
+    }
 
     advance(dtMs) {
       if (!this.sheet || this.done) return;

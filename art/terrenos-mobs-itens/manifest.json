@@ -1,0 +1,1136 @@
+{
+  "fonte": "terrenos-mobs-itens.png",
+  "tamanho": [
+    1697,
+    927
+  ],
+  "zonas": [
+    {
+      "nome": "itens",
+      "x0": 0,
+      "x1": 400
+    },
+    {
+      "nome": "centro",
+      "x0": 400,
+      "x1": 1050
+    },
+    {
+      "nome": "mobs",
+      "x0": 1050,
+      "x1": 1697
+    }
+  ],
+  "elementos": [
+    {
+      "nome": "mobs/mobs_001.png",
+      "zona": "mobs",
+      "onde": [
+        1516,
+        108,
+        1594,
+        210
+      ],
+      "tamanho": [
+        74,
+        98
+      ],
+      "area": 3272
+    },
+    {
+      "nome": "grupos/grupos_001.png",
+      "zona": "grupos",
+      "onde": [
+        992,
+        122,
+        1539,
+        686
+      ],
+      "tamanho": [
+        544,
+        560
+      ],
+      "area": 113640
+    },
+    {
+      "nome": "mobs/mobs_002.png",
+      "zona": "mobs",
+      "onde": [
+        1304,
+        148,
+        1375,
+        217
+      ],
+      "tamanho": [
+        67,
+        65
+      ],
+      "area": 2249
+    },
+    {
+      "nome": "mobs/mobs_003.png",
+      "zona": "mobs",
+      "onde": [
+        1605,
+        164,
+        1668,
+        244
+      ],
+      "tamanho": [
+        59,
+        76
+      ],
+      "area": 2342
+    },
+    {
+      "nome": "mobs/mobs_004.png",
+      "zona": "mobs",
+      "onde": [
+        1384,
+        187,
+        1455,
+        275
+      ],
+      "tamanho": [
+        67,
+        84
+      ],
+      "area": 3139
+    },
+    {
+      "nome": "mobs/mobs_005.png",
+      "zona": "mobs",
+      "onde": [
+        1505,
+        222,
+        1570,
+        287
+      ],
+      "tamanho": [
+        61,
+        61
+      ],
+      "area": 1906
+    },
+    {
+      "nome": "mobs/mobs_006.png",
+      "zona": "mobs",
+      "onde": [
+        1630,
+        248,
+        1697,
+        410
+      ],
+      "tamanho": [
+        67,
+        159
+      ],
+      "area": 5706
+    },
+    {
+      "nome": "centro/centro_001.png",
+      "zona": "centro",
+      "onde": [
+        577,
+        259,
+        623,
+        306
+      ],
+      "tamanho": [
+        42,
+        43
+      ],
+      "area": 1179
+    },
+    {
+      "nome": "itens/itens_001.png",
+      "zona": "itens",
+      "onde": [
+        253,
+        278,
+        284,
+        310
+      ],
+      "tamanho": [
+        27,
+        28
+      ],
+      "area": 613
+    },
+    {
+      "nome": "centro/centro_002.png",
+      "zona": "centro",
+      "onde": [
+        453,
+        278,
+        514,
+        333
+      ],
+      "tamanho": [
+        57,
+        51
+      ],
+      "area": 1892
+    },
+    {
+      "nome": "mobs/mobs_007.png",
+      "zona": "mobs",
+      "onde": [
+        1561,
+        278,
+        1633,
+        352
+      ],
+      "tamanho": [
+        70,
+        70
+      ],
+      "area": 2330
+    },
+    {
+      "nome": "centro/centro_003.png",
+      "zona": "centro",
+      "onde": [
+        595,
+        287,
+        681,
+        333
+      ],
+      "tamanho": [
+        82,
+        42
+      ],
+      "area": 1072
+    },
+    {
+      "nome": "itens/itens_002.png",
+      "zona": "itens",
+      "onde": [
+        278,
+        304,
+        309,
+        335
+      ],
+      "tamanho": [
+        27,
+        27
+      ],
+      "area": 570
+    },
+    {
+      "nome": "mobs/mobs_008.png",
+      "zona": "mobs",
+      "onde": [
+        1520,
+        312,
+        1579,
+        386
+      ],
+      "tamanho": [
+        55,
+        71
+      ],
+      "area": 1671
+    },
+    {
+      "nome": "itens/itens_003.png",
+      "zona": "itens",
+      "onde": [
+        199,
+        317,
+        230,
+        348
+      ],
+      "tamanho": [
+        27,
+        27
+      ],
+      "area": 575
+    },
+    {
+      "nome": "itens/itens_004.png",
+      "zona": "itens",
+      "onde": [
+        78,
+        343,
+        141,
+        398
+      ],
+      "tamanho": [
+        59,
+        52
+      ],
+      "area": 1862
+    },
+    {
+      "nome": "itens/itens_005.png",
+      "zona": "itens",
+      "onde": [
+        362,
+        348,
+        427,
+        401
+      ],
+      "tamanho": [
+        62,
+        50
+      ],
+      "area": 1690
+    },
+    {
+      "nome": "centro/centro_004.png",
+      "zona": "centro",
+      "onde": [
+        552,
+        349,
+        582,
+        381
+      ],
+      "tamanho": [
+        27,
+        28
+      ],
+      "area": 552
+    },
+    {
+      "nome": "cena/bruxo-com-relampago.png",
+      "zona": "cena",
+      "onde": [
+        651,
+        349,
+        1033,
+        497
+      ],
+      "tamanho": [
+        378,
+        144
+      ],
+      "area": 16459
+    },
+    {
+      "nome": "mobs/mobs_009.png",
+      "zona": "mobs",
+      "onde": [
+        1571,
+        362,
+        1643,
+        449
+      ],
+      "tamanho": [
+        68,
+        85
+      ],
+      "area": 3375
+    },
+    {
+      "nome": "centro/centro_006.png",
+      "zona": "centro",
+      "onde": [
+        474,
+        374,
+        514,
+        409
+      ],
+      "tamanho": [
+        38,
+        33
+      ],
+      "area": 510
+    },
+    {
+      "nome": "itens/itens_006.png",
+      "zona": "itens",
+      "onde": [
+        240,
+        384,
+        316,
+        427
+      ],
+      "tamanho": [
+        73,
+        39
+      ],
+      "area": 1493
+    },
+    {
+      "nome": "itens/itens_007.png",
+      "zona": "itens",
+      "onde": [
+        327,
+        412,
+        380,
+        453
+      ],
+      "tamanho": [
+        49,
+        38
+      ],
+      "area": 836
+    },
+    {
+      "nome": "centro/centro_007.png",
+      "zona": "centro",
+      "onde": [
+        445,
+        412,
+        511,
+        440
+      ],
+      "tamanho": [
+        63,
+        26
+      ],
+      "area": 592
+    },
+    {
+      "nome": "itens/itens_008.png",
+      "zona": "itens",
+      "onde": [
+        295,
+        424,
+        323,
+        443
+      ],
+      "tamanho": [
+        24,
+        15
+      ],
+      "area": 235
+    },
+    {
+      "nome": "centro/centro_008.png",
+      "zona": "centro",
+      "onde": [
+        534,
+        432,
+        575,
+        475
+      ],
+      "tamanho": [
+        38,
+        41
+      ],
+      "area": 560
+    },
+    {
+      "nome": "itens/itens_009.png",
+      "zona": "itens",
+      "onde": [
+        143,
+        433,
+        198,
+        472
+      ],
+      "tamanho": [
+        51,
+        35
+      ],
+      "area": 687
+    },
+    {
+      "nome": "mobs/mobs_010.png",
+      "zona": "mobs",
+      "onde": [
+        1501,
+        433,
+        1616,
+        597
+      ],
+      "tamanho": [
+        111,
+        160
+      ],
+      "area": 10863
+    },
+    {
+      "nome": "itens/itens_010.png",
+      "zona": "itens",
+      "onde": [
+        306,
+        452,
+        329,
+        470
+      ],
+      "tamanho": [
+        20,
+        14
+      ],
+      "area": 178
+    },
+    {
+      "nome": "itens/itens_011.png",
+      "zona": "itens",
+      "onde": [
+        340,
+        455,
+        371,
+        504
+      ],
+      "tamanho": [
+        27,
+        45
+      ],
+      "area": 877
+    },
+    {
+      "nome": "mobs/mobs_011.png",
+      "zona": "mobs",
+      "onde": [
+        1622,
+        464,
+        1679,
+        538
+      ],
+      "tamanho": [
+        53,
+        72
+      ],
+      "area": 2106
+    },
+    {
+      "nome": "itens/itens_012.png",
+      "zona": "itens",
+      "onde": [
+        156,
+        468,
+        262,
+        537
+      ],
+      "tamanho": [
+        102,
+        65
+      ],
+      "area": 3176
+    },
+    {
+      "nome": "centro/centro_009.png",
+      "zona": "centro",
+      "onde": [
+        960,
+        487,
+        1087,
+        567
+      ],
+      "tamanho": [
+        123,
+        77
+      ],
+      "area": 4472
+    },
+    {
+      "nome": "itens/itens_013.png",
+      "zona": "itens",
+      "onde": [
+        92,
+        496,
+        124,
+        529
+      ],
+      "tamanho": [
+        28,
+        31
+      ],
+      "area": 676
+    },
+    {
+      "nome": "itens/itens_014.png",
+      "zona": "itens",
+      "onde": [
+        174,
+        512,
+        200,
+        539
+      ],
+      "tamanho": [
+        22,
+        24
+      ],
+      "area": 260
+    },
+    {
+      "nome": "centro/centro_010.png",
+      "zona": "centro",
+      "onde": [
+        410,
+        518,
+        505,
+        578
+      ],
+      "tamanho": [
+        91,
+        57
+      ],
+      "area": 2157
+    },
+    {
+      "nome": "itens/itens_015.png",
+      "zona": "itens",
+      "onde": [
+        49,
+        539,
+        82,
+        574
+      ],
+      "tamanho": [
+        29,
+        31
+      ],
+      "area": 691
+    },
+    {
+      "nome": "centro/centro_011.png",
+      "zona": "centro",
+      "onde": [
+        607,
+        544,
+        662,
+        580
+      ],
+      "tamanho": [
+        52,
+        33
+      ],
+      "area": 450
+    },
+    {
+      "nome": "itens/itens_016.png",
+      "zona": "itens",
+      "onde": [
+        278,
+        548,
+        315,
+        599
+      ],
+      "tamanho": [
+        33,
+        47
+      ],
+      "area": 1067
+    },
+    {
+      "nome": "mobs/mobs_012.png",
+      "zona": "mobs",
+      "onde": [
+        1018,
+        555,
+        1136,
+        656
+      ],
+      "tamanho": [
+        116,
+        97
+      ],
+      "area": 4609
+    },
+    {
+      "nome": "mobs/mobs_013.png",
+      "zona": "mobs",
+      "onde": [
+        1260,
+        559,
+        1407,
+        717
+      ],
+      "tamanho": [
+        143,
+        155
+      ],
+      "area": 10433
+    },
+    {
+      "nome": "mobs/mobs_014.png",
+      "zona": "mobs",
+      "onde": [
+        1618,
+        559,
+        1684,
+        637
+      ],
+      "tamanho": [
+        62,
+        74
+      ],
+      "area": 2605
+    },
+    {
+      "nome": "centro/centro_012.png",
+      "zona": "centro",
+      "onde": [
+        496,
+        568,
+        529,
+        601
+      ],
+      "tamanho": [
+        29,
+        29
+      ],
+      "area": 669
+    },
+    {
+      "nome": "mobs/mobs_015.png",
+      "zona": "mobs",
+      "onde": [
+        1480,
+        582,
+        1540,
+        653
+      ],
+      "tamanho": [
+        56,
+        67
+      ],
+      "area": 2211
+    },
+    {
+      "nome": "itens/itens_017.png",
+      "zona": "itens",
+      "onde": [
+        210,
+        586,
+        246,
+        633
+      ],
+      "tamanho": [
+        32,
+        43
+      ],
+      "area": 976
+    },
+    {
+      "nome": "itens/itens_018.png",
+      "zona": "itens",
+      "onde": [
+        341,
+        611,
+        375,
+        653
+      ],
+      "tamanho": [
+        30,
+        39
+      ],
+      "area": 777
+    },
+    {
+      "nome": "mobs/mobs_016.png",
+      "zona": "mobs",
+      "onde": [
+        1407,
+        617,
+        1505,
+        732
+      ],
+      "tamanho": [
+        94,
+        111
+      ],
+      "area": 4276
+    },
+    {
+      "nome": "mobs/mobs_017.png",
+      "zona": "mobs",
+      "onde": [
+        1573,
+        618,
+        1636,
+        683
+      ],
+      "tamanho": [
+        59,
+        61
+      ],
+      "area": 2281
+    },
+    {
+      "nome": "centro/centro_013.png",
+      "zona": "centro",
+      "onde": [
+        574,
+        620,
+        647,
+        675
+      ],
+      "tamanho": [
+        69,
+        51
+      ],
+      "area": 1715
+    },
+    {
+      "nome": "centro/centro_014.png",
+      "zona": "centro",
+      "onde": [
+        404,
+        632,
+        433,
+        664
+      ],
+      "tamanho": [
+        25,
+        30
+      ],
+      "area": 520
+    },
+    {
+      "nome": "itens/itens_019.png",
+      "zona": "itens",
+      "onde": [
+        291,
+        636,
+        319,
+        666
+      ],
+      "tamanho": [
+        26,
+        28
+      ],
+      "area": 354
+    },
+    {
+      "nome": "centro/centro_015.png",
+      "zona": "centro",
+      "onde": [
+        926,
+        652,
+        1025,
+        739
+      ],
+      "tamanho": [
+        95,
+        83
+      ],
+      "area": 3384
+    },
+    {
+      "nome": "mobs/mobs_018.png",
+      "zona": "mobs",
+      "onde": [
+        1149,
+        654,
+        1225,
+        748
+      ],
+      "tamanho": [
+        72,
+        91
+      ],
+      "area": 3677
+    },
+    {
+      "nome": "centro/centro_016.png",
+      "zona": "centro",
+      "onde": [
+        455,
+        658,
+        487,
+        690
+      ],
+      "tamanho": [
+        28,
+        28
+      ],
+      "area": 594
+    },
+    {
+      "nome": "centro/centro_017.png",
+      "zona": "centro",
+      "onde": [
+        656,
+        663,
+        688,
+        696
+      ],
+      "tamanho": [
+        28,
+        29
+      ],
+      "area": 664
+    },
+    {
+      "nome": "itens/itens_020.png",
+      "zona": "itens",
+      "onde": [
+        351,
+        679,
+        384,
+        713
+      ],
+      "tamanho": [
+        29,
+        30
+      ],
+      "area": 713
+    },
+    {
+      "nome": "mobs/mobs_019.png",
+      "zona": "mobs",
+      "onde": [
+        1047,
+        686,
+        1094,
+        749
+      ],
+      "tamanho": [
+        43,
+        59
+      ],
+      "area": 1268
+    },
+    {
+      "nome": "mobs/mobs_020.png",
+      "zona": "mobs",
+      "onde": [
+        1218,
+        687,
+        1299,
+        831
+      ],
+      "tamanho": [
+        77,
+        140
+      ],
+      "area": 5194
+    },
+    {
+      "nome": "centro/centro_018.png",
+      "zona": "centro",
+      "onde": [
+        471,
+        699,
+        562,
+        748
+      ],
+      "tamanho": [
+        89,
+        45
+      ],
+      "area": 2157
+    },
+    {
+      "nome": "itens/itens_021.png",
+      "zona": "itens",
+      "onde": [
+        253,
+        700,
+        284,
+        731
+      ],
+      "tamanho": [
+        27,
+        27
+      ],
+      "area": 566
+    },
+    {
+      "nome": "mobs/mobs_021.png",
+      "zona": "mobs",
+      "onde": [
+        1377,
+        700,
+        1434,
+        781
+      ],
+      "tamanho": [
+        54,
+        79
+      ],
+      "area": 2263
+    },
+    {
+      "nome": "centro/centro_019.png",
+      "zona": "centro",
+      "onde": [
+        879,
+        703,
+        932,
+        728
+      ],
+      "tamanho": [
+        49,
+        22
+      ],
+      "area": 420
+    },
+    {
+      "nome": "mobs/mobs_022.png",
+      "zona": "mobs",
+      "onde": [
+        1526,
+        711,
+        1618,
+        801
+      ],
+      "tamanho": [
+        88,
+        86
+      ],
+      "area": 3889
+    },
+    {
+      "nome": "mobs/mobs_023.png",
+      "zona": "mobs",
+      "onde": [
+        1294,
+        721,
+        1373,
+        792
+      ],
+      "tamanho": [
+        77,
+        67
+      ],
+      "area": 2591
+    },
+    {
+      "nome": "centro/centro_020.png",
+      "zona": "centro",
+      "onde": [
+        674,
+        739,
+        726,
+        772
+      ],
+      "tamanho": [
+        50,
+        29
+      ],
+      "area": 601
+    },
+    {
+      "nome": "centro/centro_021.png",
+      "zona": "centro",
+      "onde": [
+        387,
+        740,
+        479,
+        781
+      ],
+      "tamanho": [
+        91,
+        38
+      ],
+      "area": 1740
+    },
+    {
+      "nome": "mobs/mobs_024.png",
+      "zona": "mobs",
+      "onde": [
+        1441,
+        747,
+        1503,
+        825
+      ],
+      "tamanho": [
+        58,
+        74
+      ],
+      "area": 2430
+    },
+    {
+      "nome": "centro/centro_022.png",
+      "zona": "centro",
+      "onde": [
+        556,
+        764,
+        616,
+        805
+      ],
+      "tamanho": [
+        56,
+        37
+      ],
+      "area": 739
+    },
+    {
+      "nome": "mobs/mobs_025.png",
+      "zona": "mobs",
+      "onde": [
+        1028,
+        770,
+        1090,
+        816
+      ],
+      "tamanho": [
+        60,
+        43
+      ],
+      "area": 1113
+    },
+    {
+      "nome": "mobs/mobs_026.png",
+      "zona": "mobs",
+      "onde": [
+        1380,
+        782,
+        1449,
+        878
+      ],
+      "tamanho": [
+        65,
+        92
+      ],
+      "area": 3582
+    },
+    {
+      "nome": "mobs/mobs_027.png",
+      "zona": "mobs",
+      "onde": [
+        1324,
+        802,
+        1378,
+        866
+      ],
+      "tamanho": [
+        53,
+        60
+      ],
+      "area": 1547
+    },
+    {
+      "nome": "centro/centro_023.png",
+      "zona": "centro",
+      "onde": [
+        477,
+        807,
+        505,
+        836
+      ],
+      "tamanho": [
+        24,
+        25
+      ],
+      "area": 506
+    },
+    {
+      "nome": "mobs/mobs_028.png",
+      "zona": "mobs",
+      "onde": [
+        1487,
+        816,
+        1554,
+        883
+      ],
+      "tamanho": [
+        64,
+        64
+      ],
+      "area": 2092
+    },
+    {
+      "nome": "centro/centro_024.png",
+      "zona": "centro",
+      "onde": [
+        646,
+        829,
+        674,
+        859
+      ],
+      "tamanho": [
+        24,
+        26
+      ],
+      "area": 538
+    }
+  ]
+}
