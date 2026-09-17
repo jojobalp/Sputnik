@@ -50,7 +50,8 @@ art/tiny-rpg-pack/
 ├── flecha/              Arrow01(32x32).png, Arrow01(100x100).png
 ├── jogo/                sheets convertidos p/ o jogo (gerados; fora do Git)
 ├── manifest.json        inventário (versionado no Git)
-└── previa-*.png         pranchas de conferência (fora do Git, como a arte)
+└── previa-no-jogo.png   prancha de conferência, gerada por tools/prancha_inimigos.py
+                         (fora do Git, como a arte)
 ```
 
 Cada tira é uma animação, com os quadros lado a lado em células de 100×100.
@@ -105,8 +106,11 @@ python3 tools/inventariar_pack.py \
   --aseprite art/tiny-rpg-pack/aseprite/*.aseprite \
   --conferir-pasta art/tiny-rpg-pack/soldier \
   --conferir-pasta art/tiny-rpg-pack/orc-com-sombra \
-  --saida art/tiny-rpg-pack/manifest.json
+  --saida art/tiny-rpg-pack/manifest.json \
+  --nome "Tiny RPG Character Asset Pack 01 v2.0 (Free Soldier&Orc)"
 ```
+
+(sem o `--nome`, o manifest fica com o nome do primeiro arquivo do glob — `Orc.aseprite`.)
 
 Resultado: **Soldier 43/43** e **Orc 34/34** quadros idênticos às tiras. Uma
 exceção conhecida: o quadro 5 da tira `Orc_Attack02` difere da fonte em **6

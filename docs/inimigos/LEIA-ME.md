@@ -78,9 +78,20 @@ verde-oliva para o orc), e o `Assets.anyFailed` mostra o aviso no rodapé.
 
 ```bash
 node tools/verificar_assets.mjs    # contrato dos PNG+JSON (célula, tiras, tags)
-node tools/smoke_inimigos.mjs      # 71 checagens: soldado, flecha, escudo, orc
+node tools/smoke_inimigos.mjs      # 68 checagens: soldado, flecha, escudo, orc
 node tools/smoke_personagem.mjs    # 34 checagens: o bruxo continua inteiro
+python3 tools/limpar_sprites.py --report    # relatório dos sheets de Sprite/Enemies
 ```
+
+O `smoke_inimigos.mjs` funciona nos dois estados: com os sheets do pack, confere
+sprite e animação; sem eles (clone novo), **pula** as checagens de arte com aviso
+e segue verificando o comportamento — são 41 checagens + 10 puladas.
+
+Duas observações do relatório que **não** são problema: as tiras do pack ficam em
+célula 64×64 (o verificador sabe disso e o `limpar_sprites.py` marca "3 frames
+encostando na borda" no orc — é o tacape chegando à última linha, sem corte) e
+aparecem 48 "cores órfãs" (tons de sombreamento da arte original: os sheets do
+pack entram 1:1, como o autor desenhou, sem passar pela limpeza).
 
 O `smoke_inimigos.mjs` carrega `assets.js` + `game.js` de verdade num DOM falso
 (`tools/apoio/falso_navegador.mjs`) e dirige o jogo quadro a quadro:

@@ -113,7 +113,8 @@ python3 tools/inventariar_pack.py \
     --aseprite art/tiny-rpg-pack/aseprite/*.aseprite \
     --conferir-pasta art/tiny-rpg-pack/soldier \
     --conferir-pasta art/tiny-rpg-pack/orc-com-sombra \
-    --saida art/tiny-rpg-pack/manifest.json
+    --saida art/tiny-rpg-pack/manifest.json \
+    --nome "Tiny RPG Character Asset Pack 01 v2.0 (Free Soldier&Orc)"
 ```
 
 **Convertidos para o jogo** (soldado atirador e orc brutamontes) por
